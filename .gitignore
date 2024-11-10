@@ -42,9 +42,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-# Ignorar claves de Firebase para Android e iOS
-android/app/google-services.json
-ios/Runner/GoogleService-Info.plist
+# # Ignorar claves de Firebase para Android e iOS
+# android/app/google-services.json
+# ios/Runner/GoogleService-Info.plist
 
-# Ignorar archivo firebase_options.dart generado automáticamente
-lib/firebase_options.dart
+# # Ignorar archivo firebase_options.dart generado automáticamente
+# lib/firebase_options.dart
