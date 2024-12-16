@@ -30,16 +30,16 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('GetX Example')),
+      appBar: AppBar(title: const Text('GetX Example')),
       body: Center(
         child: Obx(() => Text(
           'Counter: ${controller.count}',
-          style: TextStyle(fontSize: 24),
+          style: const TextStyle(fontSize: 24),
         )),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: controller.increment,
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
