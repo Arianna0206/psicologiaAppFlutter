@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Tematicas.dart';
-
+import '../controllers/home_controller.dart';
+import 'package:get/get.dart';
 
 void main() {
   runApp(const Intermediario());
@@ -11,15 +11,27 @@ class Intermediario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return const GetMaterialApp(
       debugShowCheckedModeBanner: false,
       home: InicioSecion(),
     );
   }
 }
 
-class InicioSecion extends StatelessWidget {
+class InicioSecion extends StatefulWidget {
   const InicioSecion({super.key});
+
+  @override
+  State<InicioSecion> createState() => _InicioSecionState();
+}
+
+class _InicioSecionState extends State<InicioSecion> {
+  late final HomeController _homeController;
+  @override
+  void initState() {
+    super.initState();
+    _homeController = Get.find<HomeController>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,17 +53,13 @@ class InicioSecion extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 60.0),
               child: Image.asset(
-                'img/marciano3.png',
+                'lib/assets/images/marciano3.png',
                 width: 300,
                 height: 300,
                 fit: BoxFit.cover,
               ),
             ),
             const SizedBox(height: 60),
-
-
-
-
             Expanded(
               child: Container(
                 padding: const EdgeInsets.all(20),
@@ -115,12 +123,7 @@ class InicioSecion extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Tematicas_P(),
-                            ),
-                          );
+                          _homeController.goToTematicasP();
                         },
                         child: const Text(
                           'Google',
@@ -138,4 +141,3 @@ class InicioSecion extends StatelessWidget {
     );
   }
 }
-

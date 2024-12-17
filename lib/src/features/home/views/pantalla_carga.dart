@@ -1,56 +1,55 @@
 import 'package:flutter/material.dart';
-import 'inicio_secion.dart';
-import '../../../shared/widgets/Animations.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
-void main() {
-  runApp(const PantallaCarga());
+class PantallaCarga extends StatefulWidget {
+  const PantallaCarga({super.key});
+  @override
+  _PantallaCargaState createState() => _PantallaCargaState();
 }
 
-class PantallaCarga extends StatelessWidget {
-  const PantallaCarga({super.key});
+class _PantallaCargaState extends State<PantallaCarga> {
+  final HomeController _homeController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    _homeController.goToInicioSesion();
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.pushAndRemoveUntil(context,fade(const InicioSecion()),(Route<dynamic> route) => false);
-    });
-    return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color(0xFF398AD5),
-                Color(0xFFF8F8F8),
-              ],
-            ),
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF398AD5),
+              Color(0xFFF8F8F8),
+            ],
           ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-
-
-                Image.asset(
-                  'img/marciano2.png',
-                  width: 260,
-                  height: 260,
-                  fit: BoxFit.cover,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'lib/assets/images/marciano2.png',
+                width: 260,
+                height: 260,
+                fit: BoxFit.cover,
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Cargando.....',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
                 ),
-                const SizedBox(height: 20),
-
-                const Text(
-                  'Cargando.....',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 24,
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

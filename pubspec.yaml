@@ -54,6 +54,33 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - lib/assets/images/marciano.png
+    - lib/assets/images/pie.png
+    - lib/assets/images/marciano2.png
+    - lib/assets/images/marciano3.png
+    - lib/assets/images/mar_R.png
+    - lib/assets/images/corazon.png
+    - lib/assets/images/columnaA.png
+    - lib/assets/images/columnaB.png
+    - lib/assets/images/columnac.png
+    - lib/assets/images/columnad.png
+    - lib/assets/images/cuadroTextoa.png
+    - lib/assets/images/cuadroTextob.png
+    - lib/assets/images/botona.png
+    - lib/assets/images/appbar.png
+    - lib/assets/images/fill.png
+    - lib/assets/images/fon1.png
+    - lib/assets/images/relo.png
+    - lib/assets/images/voz.png
+    - lib/assets/images/voz2.png
+    - lib/assets/images/voz3.png
+    - lib/assets/images/copa.png
+    - lib/assets/images/cosa1.png
+    - lib/assets/images/cosa2.png
+    - lib/assets/images/cosa3.png
+    - lib/assets/images/desafio.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

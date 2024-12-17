@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
-//import 'package:gabriela/pantalla_carga.dart';
-import '../../../shared/widgets/Animations.dart';
+import 'Animations.dart';
+import '../controllers/home_controller.dart';
+import 'package:get/get.dart';
+
+
 
 void main() => runApp(const MyApp());
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {return const MaterialApp(
-      title: "gabriela",
-      home: Inicio(),
+  Widget build(BuildContext context) {return const GetMaterialApp(
+      home: Inicio()
     );
   }
 }
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
-
   @override
   State<Inicio> createState() => _InicioState();
 }
 
 class _InicioState extends State<Inicio> {
+  final HomeController _homeController = Get.put(HomeController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,11 +33,6 @@ class _InicioState extends State<Inicio> {
         title: null,
         elevation: 0,
       ),
-
-
-
-
-
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -67,9 +64,7 @@ class _InicioState extends State<Inicio> {
                         borderRadius: BorderRadius.circular(60),
                       ),
                     ),
-                    onPressed: () {
-                      //Navigator.pushAndRemoveUntil(context,fade(const PantallaCarga()),(Route<dynamic> route) => false,);
-                    },
+                    onPressed: () {_homeController.goToPantallaCarga();},
                     child: const Text( "INICIAR",style: TextStyle(color: Colors.white,fontSize: 18,),
                     ),
                   ),
@@ -78,7 +73,7 @@ class _InicioState extends State<Inicio> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: Image.asset(
-                    'img/marciano.png',
+                    'lib/assets/images/marciano.png',
                     width: 300,
                     height: 300,
                     fit: BoxFit.cover,
@@ -87,21 +82,17 @@ class _InicioState extends State<Inicio> {
                 Align(
                   alignment: Alignment.topLeft,
                   child: Image.asset(
-                    'img/pie.png',
+                    'lib/assets/images/pie.png',
                     width: 100,
                     height: 50,
                     fit: BoxFit.cover,
                   ),
                 ),
-
-
               ],
             ),
           ),
         ),
       ),
-
-      
     );
   }
 }

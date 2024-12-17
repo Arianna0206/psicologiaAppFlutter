@@ -52,7 +52,7 @@ class Tematicas_P extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.pop(context);
+                            //Navigator.pop(context);
                           },
                           child: Container(
                             width: maxWidth * 0.15,
@@ -95,12 +95,7 @@ class Tematicas_P extends StatelessWidget {
                             left: container1Left,
                             top: container1Top,
                             child: GestureDetector(
-                              onTap: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => const PantallaCuestionario()),
-                                );
-                              },
+                              onTap: () {},
                               child: SizedBox(
                                 width: 169,
                                 height: 730,
@@ -108,7 +103,7 @@ class Tematicas_P extends StatelessWidget {
                                   alignment: Alignment.topCenter,
                                   children: [
                                     Image.asset(
-                                      'img/columnaA.png',
+                                      'lib/assets/images/columnaA.png',
                                       width: 169,
                                       height: 730,
                                       fit: BoxFit.cover,
@@ -153,7 +148,7 @@ class Tematicas_P extends StatelessWidget {
                                 alignment: Alignment.topCenter,
                                 children: [
                                   Image.asset(
-                                    'img/columnaB.png',
+                                    'lib/assets/images/columnaB.png',
                                     width: 169,
                                     height: 600,
                                     fit: BoxFit.cover,
@@ -197,7 +192,7 @@ class Tematicas_P extends StatelessWidget {
                                 alignment: Alignment.topCenter,
                                 children: [
                                   Image.asset(
-                                    'img/columnac.png',
+                                    'lib/assets/images/columnac.png',
                                     width: 169,
                                     height: 350,
                                     fit: BoxFit.cover,
@@ -241,7 +236,7 @@ class Tematicas_P extends StatelessWidget {
                                 alignment: Alignment.topCenter,
                                 children: [
                                   Image.asset(
-                                    'img/columnad.png',
+                                    'lib/assets/images/columnad.png',
                                     width: 169,
                                     height: 195,
                                     fit: BoxFit.cover,
