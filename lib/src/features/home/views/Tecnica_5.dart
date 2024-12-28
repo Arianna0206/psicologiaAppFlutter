@@ -3,11 +3,11 @@ import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
 
 void main() {
-  runApp(const Tecnica1());
+  runApp(const Tecnica5());
 }
 
-class Tecnica1 extends StatelessWidget {
-  const Tecnica1({super.key});
+class Tecnica5 extends StatelessWidget {
+  const Tecnica5({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,7 @@ class Tecnica1 extends StatelessWidget {
                           const SizedBox(height: 5),
                           // Imagen centrada
                           Image.asset(
-                            'lib/assets/images/voz.png',
+                            'lib/assets/images/voz6.png',
                             width: 270,
                             height: 270,
                           ),
@@ -126,7 +126,7 @@ class Tecnica1 extends StatelessWidget {
                       padding: const EdgeInsets.all(20),
                       child: Center(
                         child: ElevatedButton(
-                          onPressed: () {homeController.goToT2();},
+                          onPressed: () {homeController.goToResumenTecnica();},
                           style: ElevatedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                           ),
@@ -143,19 +143,4 @@ class Tecnica1 extends StatelessWidget {
       ),
     );
   }
-}
-
-
-List<String> procesarNumeros(List<int> numeros) {
-  var filtrados = numeros.where((n) => n > 5).toList();
-
-  var mapeados = filtrados.map((n) {
-    bool esPar = n % 2 == 0;
-    return '$n es ${esPar ? "par" : "impar"}';
-  }).toList();
-  mapeados.forEach((mensaje) {
-    print(mensaje);
-  });
-  procesarNumeros(numeros);
-  return mapeados;
 }

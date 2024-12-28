@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 void main() {
   runApp(const Intermediario());
+
 }
 
 class Intermediario extends StatelessWidget {
@@ -11,7 +12,7 @@ class Intermediario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: InicioSecion(),
     );

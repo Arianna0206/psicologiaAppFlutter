@@ -81,6 +81,9 @@ flutter:
     - lib/assets/images/cosa2.png
     - lib/assets/images/cosa3.png
     - lib/assets/images/desafio.png
+    - lib/assets/images/voz4.png
+    - lib/assets/images/voz5.png
+    - lib/assets/images/voz6.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

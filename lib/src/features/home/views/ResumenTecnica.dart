@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 void main() {
   runApp(const ResumenTecnica());
@@ -12,6 +14,7 @@ class ResumenTecnica extends StatelessWidget {
     // Obtener dimensiones de la pantalla
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
+    final HomeController homeController = Get.find<HomeController>();
 
     return MaterialApp(
       home: Scaffold(
@@ -56,7 +59,7 @@ class ResumenTecnica extends StatelessWidget {
                         ),
                         Center(
                           child: Image.asset(
-                            'img/copa.png',
+                            'lib/assets/images/copa.png',
                             width: screenWidth * 0.35,
                             height: screenWidth * 0.35,
                             fit: BoxFit.cover,
@@ -84,9 +87,7 @@ class ResumenTecnica extends StatelessWidget {
                             ),
                             // Botón con texto blanco
                             ElevatedButton(
-                              onPressed: () {
-                                // Acción del botón
-                              },
+                              onPressed: () {homeController.goToLogros();},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white, // Color del fondo del botón
                                 padding: const EdgeInsets.symmetric(

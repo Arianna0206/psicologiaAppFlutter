@@ -1,20 +1,75 @@
 import 'package:get/get.dart';
+import '../views/Cuestionario_Entrada.dart';
 import '../views/inicio_secion.dart';
 import '../views/pantalla_carga.dart';
 import '../views/Tematicas.dart';
+import '../views/Complete_Cuestionario.dart';
+import '../views/revision.dart';
+import '../views/Menu.dart';
+import '../views/Tecnica_1.dart';
+import '../views/Tecnica_2.dart';
+import '../views/Tecnica_3.dart';
+import '../views/Tecnica_4.dart';
+import '../views/Tecnica_5.dart';
+import '../views/ResumenTecnica.dart';
+import '../views/Logros.dart';
 
 class HomeController extends GetxController {
+  bool delay = true;
   void goToPantallaCarga() {
     Get.off(() => const PantallaCarga(),transition: Transition.fade,duration: const Duration(milliseconds: 2000)
     );
   }
   void goToInicioSesion() async {
-    await Future.delayed(const Duration(seconds: 2));
-    Get.off(() => const InicioSecion(),transition: Transition.fade,duration: const Duration(milliseconds: 2000));
+    if (delay) await Future.delayed(const Duration(seconds: 2));
+    delay=false;
+    Get.off(() => const InicioSecion(),transition: Transition.fade,duration: const Duration(milliseconds: 500));
   }
+
   void goToTematicasP() {
-    Get.to(() => const Tematicas_P(),transition: Transition.fade,duration: const Duration(milliseconds: 500),
+    Get.off(() => const Tematicas_P(),transition: Transition.fade,duration: const Duration(milliseconds: 500),
     );
   }
 
+  void goToCuestionario() {
+    Get.off(() => const PantallaCuestionario(), transition: Transition.fade, duration: const Duration(milliseconds: 500));
+  }
+
+  void goToComplete(){
+    Get.off(() => const Complete(),transition: Transition.upToDown,duration: const Duration(milliseconds: 500));
+  }
+
+  void goToInforme(){
+    Get.off(()=> const PantallaInforme(),transition: Transition.circularReveal,duration: const Duration(microseconds: 1000));
+  }
+
+  void goToMenu(){
+    Get.off(()=> const Menu(),transition: Transition.fade,duration: const Duration(microseconds: 500));
+  }
+
+  void goToT1(){
+    Get.off(()=> const Tecnica1(),transition: Transition.fade,duration: const Duration(microseconds: 500));
+  }
+
+  void goToT2(){
+    Get.off(()=> const Tecnica2(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+
+  void goToT3(){
+    Get.off(()=> const Tecnica3(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+
+  void goToT4(){
+    Get.off(()=> const Tecnica4(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+
+  void goToT5(){
+    Get.off(()=> const Tecnica5(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+  void goToResumenTecnica(){
+    Get.off(()=> const ResumenTecnica(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+  void goToLogros(){
+    Get.off(()=> const LogrosScreen(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
 }

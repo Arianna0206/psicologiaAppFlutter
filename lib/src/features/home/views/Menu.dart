@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 void main() {
   runApp(const Menu());
@@ -9,6 +11,7 @@ class Menu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -17,22 +20,27 @@ class Menu extends StatelessWidget {
     double rect1Height = screenHeight * 0.07; // Ajuste proporcional para la altura
     double rect2Width = screenWidth * 0.9; // 90% del ancho de la pantalla
     double rect2Height = screenHeight * 0.15; // Ajuste proporcional para la altura
-    double rect3Width = screenWidth * 0.94; // 94% del ancho de la pantalla
+    double rect3Width = screenWidth * 0.90; // 94% del ancho de la pantalla
     double rect3Height = screenHeight * 0.22; // Ajuste proporcional para la altura
 
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF3284FF),
-          title: const Text(
-            'IR A TEMATICAS',
-            style: TextStyle(color: Colors.white),
+          title: GestureDetector(
+            onTap: () {
+              homeController.goToTematicasP();
+            },
+            child: const Text(
+              'IR A TEMATICAS',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.share,color: Colors.white),
+              icon: const Icon(Icons.share, color: Colors.white),
               onPressed: () {
-
+                print("holissss");
               },
             ),
           ],
@@ -75,7 +83,7 @@ class Menu extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(40),
                           image: const DecorationImage(
-                            image: AssetImage('img/fill.png'),
+                            image: AssetImage('lib/assets/images/fill.png'),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -103,15 +111,66 @@ class Menu extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Segundo contenedor con otro rectángulo
+                // Segundo contenedor con scroll horizontal
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Container(
+                  child: SizedBox(
                     width: rect3Width,
                     height: rect3Height,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          // Primer rectángulo con botón
+                          Container(
+                            width: rect3Width,
+                            height: rect3Height,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Align(
+                              alignment: Alignment.bottomLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: ElevatedButton(
+                                  onPressed: () {homeController.goToT1();},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Iniciar',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 30),
+                          // Segundo rectángulo
+                          Container(
+                            width: rect3Width,
+                            height: rect3Height,
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          const SizedBox(width: 30),
+                          // Tercer rectángulo
+                          Container(
+                            width: rect3Width,
+                            height: rect3Height,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

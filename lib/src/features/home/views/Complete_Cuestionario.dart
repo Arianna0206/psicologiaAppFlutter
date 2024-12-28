@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'revision.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 void main() {
   runApp(const Complete());
 }
@@ -9,6 +10,7 @@ class Complete extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -63,12 +65,7 @@ class Complete extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const PantallaInforme()),
-                    );
-                  },
+                  onTap: () {homeController.goToInforme();},
                   child: Container(
                     width: 300,
                     height: 65,
@@ -81,7 +78,7 @@ class Complete extends StatelessWidget {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(30),
                           child: Image.asset(
-                            'img/botona.png',
+                            'lib/assets/images/botona.png',
                             width: 300,
                             height: 65,
                             fit: BoxFit.cover,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Complete_Cuestionario.dart';
-
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 void main() {
   runApp(const PantallaCuestionario());
 }
@@ -10,6 +10,7 @@ class PantallaCuestionario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -64,7 +65,7 @@ class PantallaCuestionario extends StatelessWidget {
                       alignment: Alignment.center,
                       children: [
                         Image.asset(
-                          'img/cuadroTextoa.png',
+                          'lib/assets/images/cuadroTextoa.png',
                           width: 295,
                           height: 130,
                           fit: BoxFit.cover,
@@ -84,7 +85,7 @@ class PantallaCuestionario extends StatelessWidget {
                       ],
                     ),
                     Image.asset(
-                      'img/corazon.png',
+                      'lib/assets/images/corazon.png',
                       width: 130,
                       height: 130,
                       fit: BoxFit.cover,
@@ -120,12 +121,7 @@ class PantallaCuestionario extends StatelessWidget {
                             borderRadius: BorderRadius.circular(50),
                           ),
                         ),
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Complete()),
-                          );
-                        },
+                        onPressed: () {homeController.goToComplete();},
                         child: const Text(
                           'Siguiente',
                           style: TextStyle(

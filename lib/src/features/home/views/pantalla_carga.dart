@@ -9,12 +9,14 @@ class PantallaCarga extends StatefulWidget {
 }
 
 class _PantallaCargaState extends State<PantallaCarga> {
-  final HomeController _homeController = Get.find();
+  final HomeController _homeController = Get.isRegistered<HomeController>() ? Get.find<HomeController>() : Get.put(HomeController());
 
   @override
   void initState() {
     super.initState();
-    _homeController.goToInicioSesion();
+    Future.microtask(() {
+      _homeController.goToInicioSesion();
+    });
   }
 
   @override

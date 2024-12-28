@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 void main() {
   runApp(const Tecnica2());
@@ -9,6 +11,7 @@ class Tecnica2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -56,7 +59,7 @@ class Tecnica2 extends StatelessWidget {
                           const SizedBox(height: 5),
                           // Imagen centrada
                           Image.asset(
-                            'img/voz3.png',
+                            'lib/assets/images/voz3.png',
                             width: 270,
                             height: 270,
                           ),
@@ -64,15 +67,15 @@ class Tecnica2 extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Image.asset(
-                                'img/marciano.png',
-                                width: 150,
-                                height: 150,
+                                'lib/assets/images/marciano.png',
+                                width: 170,
+                                height: 170,
                               ),
-                              const SizedBox(width: 140),
+                              const SizedBox(width: 50),
                               Image.asset(
-                                'img/relo.png',
-                                width: 70,
-                                height: 70,
+                                'lib/assets/images/relo.png',
+                                width: 80,
+                                height: 80,
                               ),
                             ],
                           ),
@@ -81,10 +84,10 @@ class Tecnica2 extends StatelessWidget {
                             children: [
                               ElevatedButton(
                                 onPressed: () {},
-                                child: const Text('Comenzar'),
                                 style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                                 ),
+                                child: const Text('Comenzar'),
                               ),
                             ],
                           ),
@@ -110,7 +113,7 @@ class Tecnica2 extends StatelessWidget {
                                 ),
                               ),
                               Image.asset(
-                                'img/voz2.png',
+                                'lib/assets/images/voz2.png',
                                 width: 250,
                                 height: 212,
                               ),
@@ -121,11 +124,13 @@ class Tecnica2 extends StatelessWidget {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(20),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('Siguiente ejercicio'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () {homeController.goToT3();},
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                          ),
+                          child: const Text('Siguiente ejercicio'),
                         ),
                       ),
                     ),

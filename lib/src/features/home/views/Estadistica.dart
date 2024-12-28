@@ -56,7 +56,7 @@ class ResumenEjercicioScreen extends StatelessWidget {
                               children: [
                                 // Imagen: Copa
                                 Image.asset(
-                                  'img/copa.png',
+                                  'lib/assets/images/copa.png',
                                   width: 180,
                                   height: 180,
                                   fit: BoxFit.contain,

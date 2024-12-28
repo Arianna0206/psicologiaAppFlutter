@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'Cuestionario_Entrada.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 void main() {
   runApp(const Tematicas_P());
 }
 
+
 class Tematicas_P extends StatelessWidget {
+
   const Tematicas_P({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -52,7 +56,7 @@ class Tematicas_P extends StatelessWidget {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            //Navigator.pop(context);
+                            homeController.goToInicioSesion();
                           },
                           child: Container(
                             width: maxWidth * 0.15,
@@ -95,7 +99,7 @@ class Tematicas_P extends StatelessWidget {
                             left: container1Left,
                             top: container1Top,
                             child: GestureDetector(
-                              onTap: () {},
+                              onTap: () {homeController.goToCuestionario();},
                               child: SizedBox(
                                 width: 169,
                                 height: 730,

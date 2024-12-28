@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 void main() {
   runApp(const LogrosScreen());
@@ -9,9 +11,9 @@ class LogrosScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Obtener el ancho y alto del dispositivo
     final double screenHeight = MediaQuery.of(context).size.height;
     final double screenWidth = MediaQuery.of(context).size.width;
+    final HomeController homeController = Get.find<HomeController>();
 
     return MaterialApp(
       home: Scaffold(
@@ -82,7 +84,7 @@ class LogrosScreen extends StatelessWidget {
                                 children: [
                                   // Imagen
                                   Image.asset(
-                                    'img/marciano3.png',
+                                    'lib/assets/images/marciano3.png',
                                     width: 180 * (screenWidth / 450), // Escalar ancho
                                     height: 180 * (screenHeight / 850), // Escalar altura
                                   ),
@@ -183,12 +185,12 @@ class LogrosScreen extends StatelessWidget {
                       const SizedBox(height: 30),
                       // Botón final MENÚ
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {homeController.goToMenu();},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
-                            horizontal: 50 * (screenWidth / 400), // Escalar padding horizontal
-                            vertical: 15 * (screenHeight / 800), // Escalar padding vertical
+                            horizontal: 50 * (screenWidth / 400),
+                            vertical: 15 * (screenHeight / 800),
                           ),
                         ),
                         child: const Text(
