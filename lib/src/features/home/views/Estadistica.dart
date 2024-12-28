@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 void main() {
   runApp(const ResumenEjercicioScreen());
 }
@@ -9,6 +10,7 @@ class ResumenEjercicioScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -78,7 +80,7 @@ class ResumenEjercicioScreen extends StatelessWidget {
                             const SizedBox(height: 30), // Espaciado después de la fila
                             // Botón "Ver Logros"
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {homeController.goToLogros();},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
@@ -152,7 +154,7 @@ class ResumenEjercicioScreen extends StatelessWidget {
                       const SizedBox(height: 20), // Espaciado
                       // Botón "Menú"
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {homeController.goToMenu();},
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(

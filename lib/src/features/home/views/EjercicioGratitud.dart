@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 void main() {
   runApp(const GratitudScreen());
 }
@@ -9,6 +10,7 @@ class GratitudScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -48,7 +50,7 @@ class GratitudScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     children: [
                       Image.asset(
-                        'img/voz.png',
+                        'lib/assets/images/voz.png',
                         width: 270,
                         height: 200,
                         fit: BoxFit.contain,
@@ -78,7 +80,7 @@ class GratitudScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                         child: Image.asset(
-                          'img/marciano.png',
+                          'lib/assets/images/marciano.png',
                           width: 180,
                           height: 140,
                         ),
@@ -88,7 +90,7 @@ class GratitudScreen extends StatelessWidget {
                         children: [
                           // Imagen reloj
                           Image.asset(
-                            'img/relo.png',
+                            'lib/assets/images/relo.png',
                             width: 70,
                             height: 70,
                           ),
@@ -124,7 +126,7 @@ class GratitudScreen extends StatelessWidget {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: Image.asset(
-                            'img/cosa1.png',
+                            'lib/assets/images/cosa1.png',
                             width: 310,
                             height: 200,
                           ),
@@ -136,7 +138,7 @@ class GratitudScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 150),
                             // Ajusta separación vertical
                             child: Image.asset(
-                              'img/cosa2.png',
+                              'lib/assets/images/cosa2.png',
                               width: 310,
                               height: 200,
                             ),
@@ -149,7 +151,7 @@ class GratitudScreen extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 300),
                             // Ajusta separación vertical
                             child: Image.asset(
-                              'img/cosa3.png',
+                              'lib/assets/images/cosa3.png',
                               width: 310,
                               height: 190,
                             ),
@@ -160,7 +162,7 @@ class GratitudScreen extends StatelessWidget {
                   ),
                   // Botón final
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {homeController.goToEstadistica();},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(

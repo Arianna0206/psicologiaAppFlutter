@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controllers/home_controller.dart';
 
 void main() {
   runApp(const EscrituraExpresivaScreen());
@@ -9,6 +11,7 @@ class EscrituraExpresivaScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final HomeController homeController = Get.find<HomeController>();
     return MaterialApp(
       home: Scaffold(
         body: Container(
@@ -48,7 +51,7 @@ class EscrituraExpresivaScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     children: [
                       Image.asset(
-                        'img/voz.png',
+                        'lib/assets/images/voz.png',
                         width: 280,
                         height: 270,
                         fit: BoxFit.contain,
@@ -79,7 +82,7 @@ class EscrituraExpresivaScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                         child: Image.asset(
-                          'img/marciano.png',
+                          'lib/assets/images/marciano.png',
                           width: 150,
                           height: 150,
                         ),
@@ -91,7 +94,7 @@ class EscrituraExpresivaScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(right: 10.0),
                             child: Image.asset(
-                              'img/relo.png',
+                              'lib/assets/images/relo.png',
                               width: 80,
                               height: 80,
                             ),
@@ -123,7 +126,7 @@ class EscrituraExpresivaScreen extends StatelessWidget {
                   // Imagen grande centrada
                   Center(
                     child: Image.asset(
-                      'img/desafio.png',
+                      'lib/assets/images/desafio.png',
                       width: 350,
                       height: 350,
                       fit: BoxFit.contain,
@@ -132,7 +135,7 @@ class EscrituraExpresivaScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   // Botón final
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {homeController.goToEstadistica();},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(

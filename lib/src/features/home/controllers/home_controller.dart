@@ -13,6 +13,9 @@ import '../views/Tecnica_4.dart';
 import '../views/Tecnica_5.dart';
 import '../views/ResumenTecnica.dart';
 import '../views/Logros.dart';
+import '../views/EjercicioGratitud.dart';
+import '../views/Estadistica.dart';
+import '../views/EscrituraExpresiva.dart';
 
 class HomeController extends GetxController {
   bool delay = true;
@@ -71,5 +74,14 @@ class HomeController extends GetxController {
   }
   void goToLogros(){
     Get.off(()=> const LogrosScreen(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+  void goToEjercicioG(){
+    Get.off(()=> const GratitudScreen(),transition: Transition.zoom,duration: const Duration(microseconds: 1000));
+  }
+  void goToEstadistica(){
+    Get.off(()=> const ResumenEjercicioScreen(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
+  }
+  void goToEspresivo(){
+    Get.off(()=> const EscrituraExpresivaScreen(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
   }
 }
