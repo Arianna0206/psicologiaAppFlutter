@@ -65,7 +65,9 @@ class Complete extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
                 GestureDetector(
-                  onTap: () {homeController.goToInforme();},
+                  onTap: () {
+                    homeController.goToInforme();
+                    },
                   child: Container(
                     width: 300,
                     height: 65,

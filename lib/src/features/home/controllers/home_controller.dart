@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import '../views/Cuestionario_Entrada.dart';
 import '../views/inicio_secion.dart';
-import '../views/pantalla_carga.dart';
 import '../views/Tematicas.dart';
 import '../views/Complete_Cuestionario.dart';
 import '../views/revision.dart';
@@ -16,13 +15,11 @@ import '../views/Logros.dart';
 import '../views/EjercicioGratitud.dart';
 import '../views/Estadistica.dart';
 import '../views/EscrituraExpresiva.dart';
+import 'dart:async';
 
 class HomeController extends GetxController {
   bool delay = true;
-  void goToPantallaCarga() {
-    Get.off(() => const PantallaCarga(),transition: Transition.fade,duration: const Duration(milliseconds: 2000)
-    );
-  }
+
   void goToInicioSesion() async {
     if (delay) await Future.delayed(const Duration(seconds: 2));
     delay=false;
@@ -85,3 +82,21 @@ class HomeController extends GetxController {
     Get.off(()=> const EscrituraExpresivaScreen(),transition: Transition.downToUp,duration: const Duration(microseconds: 1000));
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/home_controller.dart';
+import '../controllers/controller_services.dart';
 
 void main() {
   runApp(const Tematicas_P());
 }
 
-
 class Tematicas_P extends StatelessWidget {
-
   const Tematicas_P({super.key});
 
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find<HomeController>();
+    final ControllerServices service = Get.find<ControllerServices>();
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -98,179 +99,249 @@ class Tematicas_P extends StatelessWidget {
                           Positioned(
                             left: container1Left,
                             top: container1Top,
-                            child: GestureDetector(
-                              onTap: () {homeController.goToCuestionario();},
-                              child: SizedBox(
-                                width: 169,
-                                height: 730,
-                                child: Stack(
-                                  alignment: Alignment.topCenter,
-                                  children: [
-                                    Image.asset(
-                                      'lib/assets/images/columnaA.png',
-                                      width: 169,
-                                      height: 730,
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Positioned(
-                                      top: 30,
-                                      child: RichText(
-                                        textAlign: TextAlign.center,
-                                        text: const TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: 'ESTRES\n',
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                            TextSpan(
-                                              text: '01',
-                                              style: TextStyle(
-                                                fontSize: 40,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
+                            child: StreamBuilder<List<String>>(
+                              stream: service.categories(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text("Error al cargar datos");
+                                }
+                                final categories = snapshot.data ?? [];
+                                final categoryText = categories.isNotEmpty ? categories[0] : "Sin datos";
+                                return GestureDetector(
+                                  onTap: () {
+                                    homeController.goToCuestionario();
+                                  },
+                                  child: SizedBox(
+                                    width: 169,
+                                    height: 730,
+                                    child: Stack(
+                                      alignment: Alignment.topCenter,
+                                      children: [
+                                        Image.asset(
+                                          'lib/assets/images/columnaA.png',
+                                          width: 169,
+                                          height: 730,
+                                          fit: BoxFit.cover,
                                         ),
-                                      ),
+                                        Positioned(
+                                          top: 30,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: '$categoryText\n',
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: '01',
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           // Contenedor 2
                           Positioned(
                             left: container2Left,
                             top: container2Top,
-                            child: SizedBox(
-                              width: 169,
-                              height: 600,
-                              child: Stack(
-                                alignment: Alignment.topCenter,
-                                children: [
-                                  Image.asset(
-                                    'lib/assets/images/columnaB.png',
+                            child: StreamBuilder<List<String>>(
+                              stream: service.categories(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text("Error al cargar datos");
+                                }
+                                final categories = snapshot.data ?? [];
+                                final categoryText = categories.length > 1 ? categories[1] : "Sin datos";
+                                return GestureDetector(
+                                  onTap: () {
+                                    //homeController.goToCuestionario();
+                                  },
+                                  child: SizedBox(
                                     width: 169,
                                     height: 600,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Positioned(
-                                    top: 30,  // Ajusta la posición del texto
-                                    child: RichText(
-                                      textAlign: TextAlign.center,
-                                      text: const TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'ANSIEDAD\n',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
+                                    child: Stack(
+                                      alignment: Alignment.topCenter,
+                                      children: [
+                                        Image.asset(
+                                          'lib/assets/images/columnaB.png',
+                                          width: 169,
+                                          height: 600,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Positioned(
+                                          top: 30,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: '$categoryText\n',
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: '02',
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          TextSpan(
-                                            text: '02',
-                                            style: TextStyle(
-                                              fontSize: 40, // Número más grande
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ),
+
                           // Contenedor 3
                           Positioned(
                             left: container3Left,
                             top: container3Top,
-                            child: SizedBox(
-                              width: 169,
-                              height: 350,
-                              child: Stack(
-                                alignment: Alignment.topCenter,
-                                children: [
-                                  Image.asset(
-                                    'lib/assets/images/columnac.png',
+                            child: StreamBuilder<List<String>>(
+                              stream: service.categories(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text("Error al cargar datos");
+                                }
+                                final categories = snapshot.data ?? [];
+                                final categoryText = categories.length > 2 ? categories[2] : "Sin datos";
+                                return GestureDetector(
+                                  onTap: () {
+                                    //homeController.goToCuestionario();
+                                  },
+                                  child: SizedBox(
                                     width: 169,
                                     height: 350,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Positioned(
-                                    top: 30,  // Ajusta la posición del texto
-                                    child: RichText(
-                                      textAlign: TextAlign.center,
-                                      text: const TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'TRANSTORNOS\n',
-                                            style: TextStyle(
-                                              fontSize: 19,
-                                              color: Colors.white,
+                                    child: Stack(
+                                      alignment: Alignment.topCenter,
+                                      children: [
+                                        Image.asset(
+                                          'lib/assets/images/columnac.png',
+                                          width: 169,
+                                          height: 350,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Positioned(
+                                          top: 30,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: '$categoryText\n',
+                                                  style: const TextStyle(
+                                                    fontSize: 19,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: '03',
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          TextSpan(
-                                            text: '03',
-                                            style: TextStyle(
-                                              fontSize: 40, // Número más grande
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ),
                           // Contenedor 4
                           Positioned(
                             left: container4Left,
                             top: container4Top,
-                            child: SizedBox(
-                              width: 169,
-                              height: 195,
-                              child: Stack(
-                                alignment: Alignment.topCenter,
-                                children: [
-                                  Image.asset(
-                                    'lib/assets/images/columnad.png',
+                            child: StreamBuilder<List<String>>(
+                              stream: service.categories(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return const CircularProgressIndicator();
+                                }
+                                if (snapshot.hasError) {
+                                  return const Text("Error al cargar datos");
+                                }
+                                final categories = snapshot.data ?? [];
+                                final categoryText = categories.length > 3 ? categories[3] : "Sin datos";
+                                return GestureDetector(
+                                  onTap: () {
+                                    //homeController.goToCuestionario();
+                                  },
+                                  child: SizedBox(
                                     width: 169,
                                     height: 195,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  Positioned(
-                                    top: 30,  // Ajusta la posición del texto
-                                    child: RichText(
-                                      textAlign: TextAlign.center,
-                                      text: const TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text: 'FOBIAS\n',
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
+                                    child: Stack(
+                                      alignment: Alignment.topCenter,
+                                      children: [
+                                        Image.asset(
+                                          'lib/assets/images/columnad.png',
+                                          width: 169,
+                                          height: 195,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        Positioned(
+                                          top: 30,
+                                          child: RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text: '$categoryText\n',
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                const TextSpan(
+                                                  text: '04',
+                                                  style: TextStyle(
+                                                    fontSize: 40,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          TextSpan(
-                                            text: '04',
-                                            style: TextStyle(
-                                              fontSize: 40, // Número más grande
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -299,7 +370,3 @@ class Tematicas_P extends StatelessWidget {
     );
   }
 }
-
-
-
-

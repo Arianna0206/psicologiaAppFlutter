@@ -1,4 +1,3 @@
-// lib/src/core/app_initializer.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:psicologia_app_liid/firebase_options.dart';
 
@@ -7,6 +6,5 @@ class AppInitializer {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
   }
 }

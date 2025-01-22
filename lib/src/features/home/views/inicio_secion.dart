@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/home_controller.dart';
+import '../controllers/controller_services.dart';
 import 'package:get/get.dart';
 
 void main() {
@@ -27,11 +28,13 @@ class InicioSecion extends StatefulWidget {
 }
 
 class _InicioSecionState extends State<InicioSecion> {
-  late final HomeController _homeController;
+  late final HomeController _homeController  = Get.find<HomeController>();
+  final ControllerServices service = Get.find<ControllerServices>();
+
+
   @override
   void initState() {
     super.initState();
-    _homeController = Get.find<HomeController>();
   }
 
   @override
@@ -93,25 +96,47 @@ class _InicioSecionState extends State<InicioSecion> {
                       ),
                     ),
                     const SizedBox(height: 40),
-                    SizedBox(
-                      width: 250,
-                      height: 50,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFAB00),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(60),
-                          ),
-                        ),
-                        onPressed: () {
-                          print("utplll");
-                        },
-                        child: const Text(
-                          'UTPL',
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
-                      ),
+
+
+
+
+                    StreamBuilder<int>(
+                      stream: service.colorStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (snapshot.hasError) {
+                          return const Text('Error al cargar el color');
+                        }
+                        if (snapshot.hasData) {
+                          return SizedBox(
+                            width: 250,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Color(snapshot.data!),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(60),
+                                ),
+                              ),
+                              onPressed: () {
+                                print("UTPL");
+                              },
+                              child: const Text(
+                                'UTPL',
+                                style: TextStyle(color: Colors.white, fontSize: 16),
+                              ),
+                            ),
+                          );
+                        }
+                        return const Text('Sin datos disponibles');
+                      },
                     ),
+
+
+
+
                     const SizedBox(height: 20),
                     SizedBox(
                       width: 250,

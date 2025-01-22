@@ -9,7 +9,7 @@ class PantallaCarga extends StatefulWidget {
 }
 
 class _PantallaCargaState extends State<PantallaCarga> {
-  final HomeController _homeController = Get.isRegistered<HomeController>() ? Get.find<HomeController>() : Get.put(HomeController());
+  final HomeController _homeController = Get.find<HomeController>();
 
   @override
   void initState() {
