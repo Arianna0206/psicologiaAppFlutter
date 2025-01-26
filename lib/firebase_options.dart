@@ -50,16 +50,16 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC7kCJrab8RFC1CHR3AJASLEtiim-O1NQU',
-    appId: '1:758525324097:android:ff12a59e595bba710a8fc0',
+    apiKey: 'AIzaSyCnq60wXc293HSmmiofwnwlS0WFADKFYAk',
+    appId: '1:758525324097:web:81c06fd357901ab00a8fc0',
     messagingSenderId: '758525324097',
     projectId: 'psicologia-app-liid',
     storageBucket: 'psicologia-app-liid.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBW-P5yQyLMsAal2lFjpI9DxYpDqP3xM7A',
-    appId: '1:758525324097:ios:98c8935d213650500a8fc0',
+    apiKey: 'AIzaSyCnq60wXc293HSmmiofwnwlS0WFADKFYAk',
+    appId: '1:758525324097:web:81c06fd357901ab00a8fc0',
     messagingSenderId: '758525324097',
     projectId: 'psicologia-app-liid',
     storageBucket: 'psicologia-app-liid.firebasestorage.app',
