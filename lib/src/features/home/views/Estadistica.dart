@@ -153,23 +153,23 @@ class ResumenEjercicioScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 20), // Espaciado
                       // Botón "Menú"
-                      ElevatedButton(
-                        onPressed: () {homeController.goToMenu();},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 50,
-                            vertical: 10,
-                          ),
-                        ),
-                        child: const Text(
-                          'Menú',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
+                      // ElevatedButton(
+                      //   // onPressed: () {homeController.goToMenu();},
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: Colors.white,
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(30),
+                      //     ),
+                      //     padding: const EdgeInsets.symmetric(
+                      //       horizontal: 50,
+                      //       vertical: 10,
+                      //     ),
+                      //   ),
+                      //   child: const Text(
+                      //     'Menú',
+                      //     style: TextStyle(color: Colors.black),
+                      //   ),
+                      // ),
                       const SizedBox(height: 30), // Espaciado final
                     ],
                   ),

@@ -1,39 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../controllers/home_controller.dart';
-import '../controllers/controller_services.dart';
-
-void main() {
-  runApp(const Tematicas_P());
-}
 
 class Tematicas_P extends StatelessWidget {
   const Tematicas_P({super.key});
 
+  Stream<List<Map<String, dynamic>>> fetchCategories() {
+    CollectionReference collection =
+        FirebaseFirestore.instance.collection("categories");
+
+    return collection.snapshots().map((QuerySnapshot snapshot) {
+      return snapshot.docs.map((doc) {
+        return doc.data() as Map<String, dynamic>;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find<HomeController>();
-    final ControllerServices service = Get.find<ControllerServices>();
+    final User? user = FirebaseAuth.instance.currentUser;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF398AD5),
+          title: Row(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundImage: NetworkImage(user?.photoURL ?? ''),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                user?.displayName ?? 'Usuario',
+                style: const TextStyle(fontSize: 16),
+              ),
+              const Spacer(),
+              IconButton(
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  homeController.goToInicioSesion();
+                },
+                icon: const Icon(Icons.logout),
+                tooltip: 'Cerrar sesión',
+              ),
+            ],
+          ),
+        ),
         body: LayoutBuilder(
           builder: (context, constraints) {
             final maxWidth = constraints.maxWidth;
             final maxHeight = constraints.maxHeight;
-
-            final container1Left = maxWidth * 0.1; // Basado en left: 90
-            final container1Top = maxHeight * -0.01; // Basado en top: -10
-
-            final container2Left = maxWidth * 0.3; // Basado en left: 180
-            final container2Top = maxHeight * 0.18; // Basado en top: 160
-
-            final container3Left = maxWidth * 0.1; // Basado en left: 90
-            final container3Top = maxHeight * 0.39; // Basado en top: 350
-
-            final container4Left = maxWidth * 0.3; // Basado en left: 180
-            final container4Top = maxHeight * 0.56; // Basado en top: 510
 
             return Container(
               decoration: const BoxDecoration(
@@ -47,305 +68,92 @@ class Tematicas_P extends StatelessWidget {
                 ),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                        top: maxHeight * 0.05, left: maxWidth * 0.05),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            homeController.goToInicioSesion();
-                          },
-                          child: Container(
-                            width: maxWidth * 0.15,
-                            height: maxWidth * 0.08,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white,
-                            ),
-                            child: const Icon(
-                              Icons.close,
-                              color: Color(0xFF398AD5),
-                              size: 30,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Center(
-                          child: Text(
-                            'Selecciona una \n temática',
-                            style: TextStyle(
-                              fontSize: 29,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 20),
+                    child: Text(
+                      'Selecciona una temática',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  const Spacer(),
-                  Center(
-                    child: SizedBox(
-                      width: maxWidth * 0.77,
-                      height: maxHeight * 0.77,
-                      child: Stack(
-                        children: [
-                          // Contenedor 1
-                          Positioned(
-                            left: container1Left,
-                            top: container1Top,
-                            child: StreamBuilder<List<String>>(
-                              stream: service.categories(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text("Error al cargar datos");
-                                }
-                                final categories = snapshot.data ?? [];
-                                final categoryText = categories.isNotEmpty ? categories[0] : "Sin datos";
-                                return GestureDetector(
-                                  onTap: () {
-                                    homeController.goToCuestionario();
-                                  },
-                                  child: SizedBox(
-                                    width: 169,
-                                    height: 730,
-                                    child: Stack(
-                                      alignment: Alignment.topCenter,
-                                      children: [
-                                        Image.asset(
-                                          'lib/assets/images/columnaA.png',
-                                          width: 169,
-                                          height: 730,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned(
-                                          top: 30,
-                                          child: RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: '$categoryText\n',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                const TextSpan(
-                                                  text: '01',
-                                                  style: TextStyle(
-                                                    fontSize: 40,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
+                  Expanded(
+                    child: StreamBuilder<List<Map<String, dynamic>>>(
+                      stream: fetchCategories(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (snapshot.hasError) {
+                          return const Center(
+                            child: Text(
+                              "Error al cargar datos",
+                              style: TextStyle(color: Colors.red),
                             ),
-                          ),
-                          // Contenedor 2
-                          Positioned(
-                            left: container2Left,
-                            top: container2Top,
-                            child: StreamBuilder<List<String>>(
-                              stream: service.categories(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text("Error al cargar datos");
-                                }
-                                final categories = snapshot.data ?? [];
-                                final categoryText = categories.length > 1 ? categories[1] : "Sin datos";
-                                return GestureDetector(
-                                  onTap: () {
-                                    //homeController.goToCuestionario();
-                                  },
-                                  child: SizedBox(
-                                    width: 169,
-                                    height: 600,
-                                    child: Stack(
-                                      alignment: Alignment.topCenter,
-                                      children: [
-                                        Image.asset(
-                                          'lib/assets/images/columnaB.png',
-                                          width: 169,
-                                          height: 600,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned(
-                                          top: 30,
-                                          child: RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: '$categoryText\n',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                const TextSpan(
-                                                  text: '02',
-                                                  style: TextStyle(
-                                                    fontSize: 40,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
+                          );
+                        }
+                        final categories = snapshot.data ?? [];
+                        if (categories.isEmpty) {
+                          return const Center(
+                            child: Text(
+                              "No hay temáticas disponibles",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
                             ),
-                          ),
+                          );
+                        }
+                        return Center(
+                          child: SizedBox(
+                            width: maxWidth * 0.9,
+                            height: maxHeight,
+                            child: Stack(
+                              children: List.generate(
+                                categories.length,
+                                (index) {
+                                  final category = categories[index];
+                                  final gradientColors = (category['colors'] as List)
+                                      .map((color) => Color(int.parse(
+                                          color.replaceFirst('#', '0xFF'))))
+                                      .toList();
 
-                          // Contenedor 3
-                          Positioned(
-                            left: container3Left,
-                            top: container3Top,
-                            child: StreamBuilder<List<String>>(
-                              stream: service.categories(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text("Error al cargar datos");
-                                }
-                                final categories = snapshot.data ?? [];
-                                final categoryText = categories.length > 2 ? categories[2] : "Sin datos";
-                                return GestureDetector(
-                                  onTap: () {
-                                    //homeController.goToCuestionario();
-                                  },
-                                  child: SizedBox(
-                                    width: 169,
-                                    height: 350,
-                                    child: Stack(
-                                      alignment: Alignment.topCenter,
-                                      children: [
-                                        Image.asset(
-                                          'lib/assets/images/columnac.png',
-                                          width: 169,
-                                          height: 350,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned(
-                                          top: 30,
-                                          child: RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: '$categoryText\n',
-                                                  style: const TextStyle(
-                                                    fontSize: 19,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                const TextSpan(
-                                                  text: '03',
-                                                  style: TextStyle(
-                                                    fontSize: 40,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                  // Posiciones en escalera
+                                  final leftOffset = index % 2 == 0
+                                      ? maxWidth * 0.1
+                                      : maxWidth * 0.3;
+                                  final topOffset = maxHeight * 0.15 * index;
+
+                                  return Positioned(
+                                    left: leftOffset,
+                                    top: topOffset,
+                                    child: _buildDynamicColumn(
+                                      width: maxWidth * 0.5,
+                                      height: maxHeight * 0.6,
+                                      title: category['title'] ?? 'Sin título',
+                                      number: index + 1,
+                                      gradientColors: gradientColors.cast<Color>(),
+                                      onTap: () {
+                                        final selectedCategory = category['title'] ?? "";
+                                        if (selectedCategory.isNotEmpty) {
+                                          homeController.goToCuestionario(selectedCategory);
+                                        } else {
+                                          print("Error: Categoría vacía");
+                                        }
+                                      },
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                          // Contenedor 4
-                          Positioned(
-                            left: container4Left,
-                            top: container4Top,
-                            child: StreamBuilder<List<String>>(
-                              stream: service.categories(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const CircularProgressIndicator();
-                                }
-                                if (snapshot.hasError) {
-                                  return const Text("Error al cargar datos");
-                                }
-                                final categories = snapshot.data ?? [];
-                                final categoryText = categories.length > 3 ? categories[3] : "Sin datos";
-                                return GestureDetector(
-                                  onTap: () {
-                                    //homeController.goToCuestionario();
-                                  },
-                                  child: SizedBox(
-                                    width: 169,
-                                    height: 195,
-                                    child: Stack(
-                                      alignment: Alignment.topCenter,
-                                      children: [
-                                        Image.asset(
-                                          'lib/assets/images/columnad.png',
-                                          width: 169,
-                                          height: 195,
-                                          fit: BoxFit.cover,
-                                        ),
-                                        Positioned(
-                                          top: 30,
-                                          child: RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text: '$categoryText\n',
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                                const TextSpan(
-                                                  text: '04',
-                                                  style: TextStyle(
-                                                    fontSize: 40,
-                                                    color: Colors.white,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -355,7 +163,7 @@ class Tematicas_P extends StatelessWidget {
         ),
         bottomNavigationBar: Container(
           color: const Color(0xFF3284FF),
-          height: 55,
+          height: MediaQuery.of(context).size.height * 0.08,
           child: const Center(
             child: Text(
               'LiiD UTPL',
@@ -364,6 +172,60 @@ class Tematicas_P extends StatelessWidget {
                 fontSize: 16,
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+    Widget _buildDynamicColumn({
+    required double width,
+    required double height,
+    required String title,
+    required int number,
+    required List<Color> gradientColors,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: gradientColors,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start, 
+            children: [
+              // **Título en la parte superior**
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              // **Número debajo del título**
+              Text(
+                number.toString().padLeft(2, '0'),
+                style: const TextStyle(
+                  fontSize: 40,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
         ),
       ),

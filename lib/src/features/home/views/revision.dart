@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:psicologia_app_liid/src/shared/widgets/audio_player_widget.dart';
 import '../controllers/home_controller.dart';
 
-void main() {
-  runApp(const PantallaInforme());
-}
 
 class PantallaInforme extends StatelessWidget {
-  const PantallaInforme({super.key});
+  final String categoryId; 
+
+  const PantallaInforme({super.key, required this.categoryId});
+
 
   @override
   Widget build(BuildContext context) {
     final HomeController homeController = Get.find<HomeController>();
+    final AudioService audioService = AudioService();
+
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: Container(
           decoration: const BoxDecoration(
@@ -38,7 +42,7 @@ class PantallaInforme extends StatelessWidget {
                       'INFORME PERSONALIZADO',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 29, // Tamaño mayor
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
                       ),
                       textAlign: TextAlign.center,
@@ -51,7 +55,7 @@ class PantallaInforme extends StatelessWidget {
                       'Basado en tus respuestas al cuestionario, hemos identificado los siguientes factores que pueden estar contribuyendo a tu nivel de estrés. A continuación, te ofrecemos algunas sugerencias personalizadas para abordar estos factores.',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: 15,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -71,16 +75,46 @@ class PantallaInforme extends StatelessWidget {
                         ),
                         const Positioned(
                           top: 60,
-                          left: 30,
+                          left: 35,
                           child: Text(
                             'Has indicado que\n frecuentemente te encuentras \n en entornos ruidosos.Considera\n el uso de tapones para los oídos\n o la búsqueda de momentos\n tranquilos durante el día para\n reducir la exposición al ruido.',
                             style: TextStyle(
                               color: Colors.black87,
-                              fontSize: 12,
+                              fontSize: 11,
                             ),
                             textAlign: TextAlign.start,
                           ),
                         ),
+                       
+                        Positioned(
+                          top: 30,
+                          right: 15,
+                          child: GestureDetector(
+                            onTap: () {
+                              audioService.playAudio("audios/AudioInformePersonalizado.m4a");
+                            },
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    blurRadius: 4,
+                                    offset: Offset(2, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(8),
+                              child: const Icon(
+                                Icons.play_circle_fill,
+                                color: Color(0xFF9C419E),
+                                size: 30,
+                              ),
+                            ),
+                          ),
+                        ),
+
                       ],
                     ),
                   ),
@@ -90,6 +124,7 @@ class PantallaInforme extends StatelessWidget {
                     child: Transform.translate(
                       offset: const Offset(0, -50),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Image.asset(
                             'lib/assets/images/mar_R.png',
@@ -98,28 +133,30 @@ class PantallaInforme extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                           const SizedBox(height: 10),
-                          SizedBox(
-                            width: 110,
-                            height: 40,
-                            child: Builder(
-                              builder: (BuildContext innerContext) {
-                                return ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF9C419E),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: SizedBox(
+                              width: 117,
+                              height: 40,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFF9C419E),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
-                                  onPressed: () {homeController.goToMenu();},
-                                  child: const Text(
-                                    'Siguiente',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
+                                ),
+                                onPressed: () {
+                                  homeController.goToMenu(categoryId); 
+                                },
+                                child: const Text(
+                                  'Siguiente',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                );
-                              },
+                                ),
+                              ),
                             ),
                           ),
                         ],
@@ -127,6 +164,19 @@ class PantallaInforme extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+        ),
+        bottomNavigationBar: Container(
+          color: const Color(0xFF3284FF),
+          height: MediaQuery.of(context).size.height * 0.08,
+          child: const Center(
+            child: Text(
+              'LiiD UTPL',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
               ),
             ),
           ),

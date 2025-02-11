@@ -12,8 +12,8 @@ class ColorService {
       return colorList;
     });
   }
-  Stream<List<Map<String, dynamic>>> Categories(){
-    CollectionReference collection = FirebaseFirestore.instance.collection("users");
+  Stream<List<Map<String, dynamic>>> categories(){
+    CollectionReference collection = FirebaseFirestore.instance.collection("categories");
     return collection.snapshots().map((QuerySnapshot snapshot){
       List<Map<String, dynamic>> categories = [];
       snapshot.docs.forEach((doc){
@@ -22,6 +22,10 @@ class ColorService {
       return categories;
     });
   }
+
+  
+
+
 }
 
 

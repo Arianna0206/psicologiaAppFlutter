@@ -1,71 +1,119 @@
-import 'dart:async';
 import 'package:get/get.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:psicologia_app_liid/src/core/services/color_service.dart';
-
-
+import 'package:psicologia_app_liid/src/shared/services/firebase_service.dart';
 
 class ControllerServices extends GetxController {
-  final Map<String, List<String>> _questions = {};
-  final Map<String, String> _questionSelect = {};
-  final StreamController<Map<String, List<String>>> _questionsController = StreamController<Map<String, List<String>>>.broadcast();
-  final StreamController<Map<String, String>> _questionSelectController = StreamController<Map<String, String>>.broadcast();
-  final int numPages = 2;
-  bool endPages = false;
+  final FirebaseService _firebaseService = FirebaseService();
 
+  final RxMap<String, List<String>> _questions = <String, List<String>>{}.obs;
+  final RxMap<String, String> questSelect = <String, String>{}.obs;
+  final RxList<Map<String, dynamic>> techniques = <Map<String, dynamic>>[].obs;
+  final RxInt preguntasPorPagina = 3.obs;
+  final RxList<DocumentSnapshot> exercises = <DocumentSnapshot>[].obs;
+  final RxInt totalExercises = 1.obs;
+  final RxBool isLoading = true.obs;
+   final Map<String, List<int>> _questionValues = {};
+
+  Map<String, List<String>> get quest => _questions;
 
   Stream<int> get colorStream => ColorService().fetchColors().map((colors) {
-    if (colors.isNotEmpty) {
-      Map<String, dynamic> firstDoc = colors.first;
-      return firstDoc['color'] as int;
-    }
-    return 0xFF26A69A;
-  });
+        if (colors.isNotEmpty) {
+          return colors.first['color'] as int;
+        }
+        return 0xFF26A69A; // Color por defecto
+      });
 
-  Stream<Map<String, List<String>>> get questionsStream => _questionsController.stream;
-  Stream<Map<String, String>> get questionSelectStream => _questionSelectController.stream;
-  Map<String, List<String>> get quest => _questions;
-  Map<String, String> get questSelect => _questionSelect;
+  Future<void> fetchQuestions(String categoryId) async {
+    print("Buscando preguntas en la categoría: $categoryId");
+
+    try {
+      DocumentSnapshot? categoryDoc = await _firebaseService.getCategory(categoryId);
+      if (categoryDoc != null && categoryDoc.exists) {
+        preguntasPorPagina.value = categoryDoc["preguntasPorPagina"] ?? 3;
+      }
+
+      QuerySnapshot? questionsSnapshot = await _firebaseService.getQuestions(categoryId);
+      if (questionsSnapshot == null || questionsSnapshot.docs.isEmpty) {
+        _questions.clear();
+        return;
+      }
+
+      _questions.clear();
+      for (var doc in questionsSnapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        _questions[data["title"] ?? "Pregunta sin título"] = List<String>.from(data["options"] ?? []);
+      }
+    } catch (error) {
+      print("Error al recuperar preguntas: $error");
+    }
+  }
+
+  Future<void> fetchTechniques(String categoryId) async {
+    print("Buscando técnicas para la categoría: $categoryId");
+
+    try {
+      QuerySnapshot? snapshot = await _firebaseService.getTechniques(categoryId);
+      if (snapshot != null) {
+        techniques.clear();
+        techniques.addAll(snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>));
+      }
+    } catch (error) {
+      print("Error al recuperar técnicas: $error");
+    }
+  }
+
+  Future<void> saveResultToFirebase(int score, String category) async {
+    await _firebaseService.saveResult(score, category);
+  }
+
+  Future<int?> getStoredResult(String categoryId) async {
+    return await _firebaseService.getStoredResult(categoryId);
+  }
+
+  Future<void> fetchExercises(String categoryId, String methodId) async {
+    isLoading.value = true;
+
+    try {
+      QuerySnapshot? snapshot = await _firebaseService.getExercises(categoryId, methodId);
+      if (snapshot != null && snapshot.docs.isNotEmpty) {
+        exercises.assignAll(snapshot.docs);
+        totalExercises.value = snapshot.docs.length;
+      }
+    } catch (error) {
+      print("Error al obtener ejercicios: $error");
+    }
+
+    isLoading.value = false;
+  }
+
+  Future<void> saveCompletedExercise(String categoryId, String methodId, int currentExerciseIndex) async {
+    if (currentExerciseIndex < exercises.length) {
+      String exerciseId = exercises[currentExerciseIndex].id;
+      await _firebaseService.saveCompletedExercise(categoryId, methodId, exerciseId);
+    }
+  }
 
   void updateQuestionSelect(String key, String value) {
-    _questionSelect[key] = value;
-    _questionSelectController.add(_questionSelect);
+    questSelect[key] = value; 
   }
 
+  int calculateTotalScore() {
+  int totalScore = 0;
 
-  void deleteQuestion(Map<String, String> respuestasSeleccionadas) {
-    _questions.removeWhere(
-          (pregunta, respuestas) => respuestasSeleccionadas.keys.contains(pregunta),
-    );
-    _questionsController.add(_questions);
-  }
+  questSelect.forEach((pregunta, respuesta) {
+    if (_questions.containsKey(pregunta) && _questionValues.containsKey(pregunta)) {
+      List<String> opciones = _questions[pregunta]!;
+      List<int> valores = _questionValues[pregunta]!;
 
-  void updateQuestions(Map<String, dynamic> twoDoc) {
-    twoDoc.forEach((key, value) {if (value is List<dynamic>) {_questions[key] = value.cast<String>();}});
-    _questionsController.add(_questions);
-  }
-
-  Stream<List<String>> categories() {
-    return ColorService().Categories().map((cate) {
-      if (cate.isNotEmpty) {
-        Map<String, dynamic> firstDoc = cate.first;
-        List<String> updatedList = firstDoc.values.map((value) => value as String).toList();
-        updateQuestions(cate[1]);
-        return updatedList;
+      int index = opciones.indexOf(respuesta);
+      if (index != -1 && index < valores.length) {
+        totalScore += valores[index]; 
       }
-      return [];
-    });
-  }
-  void veryPages(int iterador) {
-    endPages = iterador == numPages;
-  }
+    }
+  });
+
+  print("Puntaje calculado: $totalScore");
+  return totalScore;
 }
-
-
-
-
-
-
-
-
-
-
+}

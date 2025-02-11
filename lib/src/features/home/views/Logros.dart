@@ -184,20 +184,20 @@ class LogrosScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 30),
                       // Botón final MENÚ
-                      ElevatedButton(
-                        onPressed: () {homeController.goToMenu();},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 50 * (screenWidth / 400),
-                            vertical: 15 * (screenHeight / 800),
-                          ),
-                        ),
-                        child: const Text(
-                          'Menú',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
+                      // ElevatedButton(
+                      //   onPressed: () {homeController.goToMenu();},
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: Colors.white,
+                      //     padding: EdgeInsets.symmetric(
+                      //       horizontal: 50 * (screenWidth / 400),
+                      //       vertical: 15 * (screenHeight / 800),
+                      //     ),
+                      //   ),
+                      //   child: const Text(
+                      //     'Menú',
+                      //     style: TextStyle(color: Colors.black),
+                      //   ),
+                      // ),
                       const SizedBox(height: 60), // Espacio final
                     ],
                   ),

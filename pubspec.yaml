@@ -30,6 +30,10 @@ environment:
 dependencies:
   cupertino_icons: ^1.0.8
   firebase_core: ^3.7.0
+  firebase_storage: ^12.2.3
+  just_audio: ^0.9.30
+  file_selector: ^1.0.0
+  video_player: ^2.8.1
   firebase_auth: ^5.1.4
   cloud_firestore: ^5.6.1
   logger: ^2.5.0
@@ -62,34 +66,25 @@ flutter:
   uses-material-design: true
 
   assets:
-    - lib/assets/images/marciano.png
     - lib/assets/images/pie.png
     - lib/assets/images/marciano2.png
-    - lib/assets/images/marciano3.png
     - lib/assets/images/mar_R.png
-    - lib/assets/images/corazon.png
-    - lib/assets/images/columnaA.png
-    - lib/assets/images/columnaB.png
-    - lib/assets/images/columnac.png
-    - lib/assets/images/columnad.png
-    - lib/assets/images/cuadroTextoa.png
     - lib/assets/images/cuadroTextob.png
-    - lib/assets/images/botona.png
     - lib/assets/images/appbar.png
     - lib/assets/images/fill.png
     - lib/assets/images/fon1.png
     - lib/assets/images/relo.png
-    - lib/assets/images/voz.png
-    - lib/assets/images/voz2.png
-    - lib/assets/images/voz3.png
     - lib/assets/images/copa.png
     - lib/assets/images/cosa1.png
     - lib/assets/images/cosa2.png
     - lib/assets/images/cosa3.png
     - lib/assets/images/desafio.png
-    - lib/assets/images/voz4.png
-    - lib/assets/images/voz5.png
-    - lib/assets/images/voz6.png
+    - lib/assets/images/robot_bajo.png
+    - lib/assets/images/robot_medio.png
+    - lib/assets/images/robot_alto.png
+    - lib/assets/images/reloj.png
+    - lib/assets/images/reloj.svg
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
