@@ -1,0 +1,2 @@
+/Users/ariannaramon/Desktop/psicologiaAppFlutter/android/app/.cxx/Debug/1y6n2ph1/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/ariannaramon/Desktop/psicologiaAppFlutter/android/app/.cxx/Debug/1y6n2ph1/armeabi-v7a/CMakeFiles/rebuild_cache.dir

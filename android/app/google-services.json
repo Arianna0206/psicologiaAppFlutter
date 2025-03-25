@@ -1,26 +1,51 @@
 {
   "project_info": {
-    "project_number": "789809083888",
-    "project_id": "psicologo-13a22",
-    "storage_bucket": "psicologo-13a22.firebasestorage.app"
+    "project_number": "758525324097",
+    "project_id": "psicologia-app-liid",
+    "storage_bucket": "psicologia-app-liid.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:789809083888:android:2cd2cc528583ba9ae69935",
+        "mobilesdk_app_id": "1:758525324097:android:ff12a59e595bba710a8fc0",
         "android_client_info": {
           "package_name": "com.liid.psicologiaappliid"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "758525324097-98rscji3ri2riuoof9ti2cns54fbii33.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.liid.psicologiaappliid",
+            "certificate_hash": "b37779dd96a16dd87f8b89e358762db29abae62b"
+          }
+        },
+        {
+          "client_id": "758525324097-69c2cjh5in4henh6akqlhvmbppmclf5b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyDa3br2TX-eRJ7m7MWu_QgMGJi4GG04tvk"
+          "current_key": "AIzaSyC7kCJrab8RFC1CHR3AJASLEtiim-O1NQU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "758525324097-69c2cjh5in4henh6akqlhvmbppmclf5b.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "758525324097-ct70fk8jc8afcnrc4jhnj9qhvpeduap2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.psicologiaAppLiid"
+              }
+            }
+          ]
         }
       }
     }
