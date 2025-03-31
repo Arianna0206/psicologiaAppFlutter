@@ -12,7 +12,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:psicologia_app_liid/presentation/blocs/notifications/notifications_bloc.dart';
 import 'package:psicologia_app_liid/features/home/controllers/home_controller.dart';
 import 'package:psicologia_app_liid/features/home/controllers/controller_services.dart';
-import 'package:psicologia_app_liid/src/features/home/controllers/controller_inicio.dart';
+import 'package:psicologia_app_liid/features/home/controllers/controller_inicio.dart';
 
 // Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 //   print("Notificación recibida en segundo plano: ${message.notification?.title}");

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:psicologia_app_liid/src/features/home/controllers/home_controller.dart';
+import 'package:psicologia_app_liid/features/auth/terms_and_conditions_screen.dart';
+import 'package:psicologia_app_liid/features/home/controllers/home_controller.dart';
 import '../services/auth_service.dart';
 
 class RegistroUsuario extends StatefulWidget {
@@ -166,6 +167,22 @@ class _RegistroUsuarioState extends State<RegistroUsuario> {
                             child: const Text("¿Ya tienes cuenta? Inicia sesión"),
                           ),
                         ),
+
+                        const SizedBox(height: 30),
+
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => const TermsAndConditionsScreen()),
+                            );
+                          },
+                          child: const Text(
+                            "Leer términos y condiciones",
+                            style: TextStyle(decoration: TextDecoration.underline),
+                          ),
+                        )
+
                       ],
                     ),
                   ),

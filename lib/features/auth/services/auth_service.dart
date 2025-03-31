@@ -102,6 +102,7 @@ class AuthService {
 
   Future<void> signOut() async {
     try {
+      await _googleSignIn.disconnect();
       await _googleSignIn.signOut();
       await _auth.signOut();
       _logger.i("Sesión cerrada");

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:psicologia_app_liid/features/auth/terms_and_conditions_screen.dart';
 
 import '../../home/controllers/controller_services.dart';
 import '../../home/controllers/home_controller.dart';
@@ -150,6 +151,22 @@ class _InicioSesionState extends State<InicioSesion> {
                       onPressed: () => _homeController.goToRegistro(),
                       child: const Text("¿No tienes cuenta? Regístrate aquí"),
                     ),
+
+                    const SizedBox(height: 40),
+
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const TermsAndConditionsScreen()),
+                        );
+                      },
+                      child: const Text(
+                        "Leer términos y condiciones",
+                        style: TextStyle(decoration: TextDecoration.underline),
+                      ),
+                    )
+
                   ],
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,14 +20,14 @@ class GratitudScreen extends StatefulWidget {
 
 class GratitudScreenState extends State<GratitudScreen> {
   String userName = "Usuario";
-  String message = "Tomemos unos minutos para reflexionar sobre nuestro día.";
-  List<String> messages = [
-    "La gratitud puede transformar tu día y tu perspectiva.",
-    "Agradece las pequeñas cosas y la vida se vuelve más grande.",
-    "Cada día es una nueva oportunidad para agradecer.",
-    "La gratitud es la clave para la felicidad.",
-    "Hoy es un buen día para decir gracias."
-  ];
+  // String message = "Tomemos unos minutos para reflexionar sobre nuestro día.";
+  // List<String> messages = [
+  //   "La gratitud puede transformar tu día y tu perspectiva.",
+  //   "Agradece las pequeñas cosas y la vida se vuelve más grande.",
+  //   "Cada día es una nueva oportunidad para agradecer.",
+  //   "La gratitud es la clave para la felicidad.",
+  //   "Hoy es un buen día para decir gracias."
+  // ];
 
   final TextEditingController controller1 = TextEditingController();
   final TextEditingController controller2 = TextEditingController();
@@ -36,6 +37,8 @@ class GratitudScreenState extends State<GratitudScreen> {
   final RxBool isFilled1 = false.obs;
   final RxBool isFilled2 = false.obs;
   final RxBool isFilled3 = false.obs;
+  final AudioPlayer player = AudioPlayer();
+  final RxBool isPlaying = false.obs;
 
   Timer? _timer;
   Timer? _messageTimer;
@@ -47,7 +50,26 @@ class GratitudScreenState extends State<GratitudScreen> {
   void initState() {
     super.initState();
     _loadUserData();
-    _startMessageRotation();
+    service.fetchFraseMotivacional(widget.categoryId, widget.methodId);
+    // _startMessageRotation();
+
+    player.onPlayerComplete.listen((event) {
+      isPlaying.value = false;
+    });
+
+     player.setAudioContext(AudioContext(
+      android: const AudioContextAndroid(
+        isSpeakerphoneOn: true,
+        stayAwake: true,
+        contentType: AndroidContentType.music,
+        usageType: AndroidUsageType.media,
+        audioFocus: AndroidAudioFocus.gain,
+      ),
+      iOS: const AudioContextIOS(
+        category: AVAudioSessionCategory.playback,
+        options: [AVAudioSessionOptions.defaultToSpeaker],
+      ),
+    ));
 
     controller1.addListener(() => checkFilled(controller1, isFilled1));
     controller2.addListener(() => checkFilled(controller2, isFilled2));
@@ -66,15 +88,15 @@ class GratitudScreenState extends State<GratitudScreen> {
     }
   }
 
-  void _startMessageRotation() {
-    _messageTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (mounted) {
-        setState(() {
-          message = (messages..shuffle()).first;
-        });
-      }
-    });
-  }
+  // void _startMessageRotation() {
+  //   _messageTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+  //     if (mounted) {
+  //       setState(() {
+  //         message = (messages..shuffle()).first;
+  //       });
+  //     }
+  //   });
+  // }
 
   void checkFilled(TextEditingController controller, RxBool isFilled) {
     isFilled.value = controller.text.length >= 120;
@@ -168,37 +190,78 @@ class GratitudScreenState extends State<GratitudScreen> {
                         ),
                       ),
                       Positioned(
-                        top: 70,
-                        left: 30,
-                        right: 30,
-                        child: Column(
-                          children: [
-                            Text(
-                              "Hola, $userName",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            SizedBox(
-                              width: 200,
-                              child: Text(
-                                message,
-                                textAlign: TextAlign.center,
+                        top: 60,
+                        left: 117,
+                        right: 100,
+                        bottom: 2,
+                        child: Obx(() {
+                          final frase = service.fraseMotivacional.value;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Hola, $userName",
+                                textAlign: TextAlign.left,
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                frase.isNotEmpty ? frase : "Cargando descripción...",
+                                style: const TextStyle(
+                                  fontSize: 13,
                                   color: Colors.black87,
                                 ),
                               ),
+                            ],
+                          );
+                        }),
+                      ),
+                      Positioned(
+                        top: 0,
+                        left: 80,
+                        child: Obx(() {
+                          final audioUrl = service.audioUrlMotivacional.value;
+                          if (audioUrl.isEmpty) return const SizedBox.shrink();
+                          return GestureDetector(
+                            onTap: () async {
+                              final audioUrl = service.audioUrlMotivacional.value;
+                              try {
+                                if (isPlaying.value) {
+                                  await player.pause();
+                                  isPlaying.value = false;
+                                } else {
+                                  await player.play(UrlSource(audioUrl));
+                                  isPlaying.value = true;
+                                }
+                              } catch (e) {
+                                print("Error: $e");
+                                Get.snackbar("Error", "No se pudo reproducir el audio.");
+                              }
+                            },
+                            child: Container(
+                              width: 56,
+                              height: 56,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
+                              ),
+                              child: Obx(() => Icon(
+                                isPlaying.value ? Icons.pause : Icons.play_arrow,
+                                color: Colors.purple,
+                                size: 32,
+                              )),
                             ),
-                          ],
-                        ),
+                          );
+                        }),
                       ),
                     ],
                   ),
+
 
                   const SizedBox(height: 30),
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:psicologia_app_liid/features/home/controllers/home_controller.dart';
@@ -9,16 +10,21 @@ class EscrituraExpresivaScreen extends StatefulWidget {
   final String categoryId;
   final String methodId;
 
-  const EscrituraExpresivaScreen({super.key, required this.categoryId, required this.methodId});
+  const EscrituraExpresivaScreen(
+      {super.key, required this.categoryId, required this.methodId});
 
   @override
-  State<EscrituraExpresivaScreen> createState() => _EscrituraExpresivaScreenState();
+  State<EscrituraExpresivaScreen> createState() =>
+      _EscrituraExpresivaScreenState();
 }
 
-class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> with SingleTickerProviderStateMixin {
+class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen>
+    with SingleTickerProviderStateMixin {
   final HomeController homeController = Get.find<HomeController>();
   final ControllerServices service = Get.find<ControllerServices>();
 
+  final RxBool isPlaying = false.obs;
+  final AudioPlayer player = AudioPlayer();
   late final AnimationController _animationController;
   late final Animation<double> scaleAnimation;
   final TextEditingController _textController = TextEditingController();
@@ -30,16 +36,27 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
   @override
   void initState() {
     super.initState();
+
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
+
     scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.elasticOut),
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) => _animationController.forward());
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animationController.forward();
+      service.fetchFraseMotivacional(widget.categoryId, widget.methodId);
+    });
+
+    player.onPlayerComplete.listen((event) {
+      isPlaying.value = false;
+    });
+
     _textController.addListener(() {
-      setState(() {}); 
+      setState(() {});
     });
   }
 
@@ -56,7 +73,6 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
       });
     });
   }
-
 
   void _stopTimer() {
     if (!_isRunning) return;
@@ -77,12 +93,12 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
     homeController.goToResumenExpresiva(widget.categoryId, widget.methodId);
   }
 
-
   @override
   void dispose() {
     _animationController.dispose();
     _timer?.cancel();
     _textController.dispose();
+    player.dispose();
     super.dispose();
   }
 
@@ -107,26 +123,95 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                 const SizedBox(height: 20),
                 const Text(
                   'Escritura expresiva',
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 10),
                 Stack(
-                  alignment: Alignment.center,
                   children: [
+                    // Imagen del globo de voz
                     CachedNetworkAsset(
-                      url: 'https://firebasestorage.googleapis.com/v0/b/psicologia-app-liid.firebasestorage.app/o/images%2Fvoz.png?alt=media&token=6f376c2d-a533-4d5a-9a3e-d2e65780fff4',
+                      url:
+                          'https://firebasestorage.googleapis.com/v0/b/psicologia-app-liid.firebasestorage.app/o/images%2Fvoz.png?alt=media&token=6f376c2d-a533-4d5a-9a3e-d2e65780fff4',
                       width: 280,
                       height: 270,
                       fit: BoxFit.contain,
                     ),
-                    const Positioned(
-                      child: Text(
-                        'Vamos a tomarnos unos minutos para\nescribir sobre tus pensamientos y\nsentimientos. Esto puede ayudarte a\nlibrar el estrés.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 10, color: Colors.black),
-                      ),
-                    ),
+
+                    // Botón de audio (posicionado arriba)
+                    Obx(() {
+                      final audioUrl = service.audioUrlMotivacional.value;
+                      if (audioUrl.isEmpty) return const SizedBox.shrink();
+
+                      return Positioned(
+                        top: 20,
+                        right: 20,
+                        child: GestureDetector(
+                          onTap: () async {
+                            try {
+                              if (isPlaying.value) {
+                                await player.pause();
+                                isPlaying.value = false;
+                              } else {
+                                await player.setVolume(1.0);
+                                await player.play(UrlSource(audioUrl));
+                                isPlaying.value = true;
+                              }
+                            } catch (e) {
+                              Get.snackbar(
+                                  "Error", "No se pudo reproducir el audio.");
+                            }
+                          },
+                          child: Container(
+                            width: 56,
+                            height: 56,
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(color: Colors.black26, blurRadius: 4)
+                              ],
+                            ),
+                            child: Obx(() => Icon(
+                                  isPlaying.value
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                  color: Colors.purple,
+                                  size: 32,
+                                )),
+                          ),
+                        ),
+                      );
+                    }),
+
+                    // Texto de la frase (centrado dentro del globo)
+                    Obx(() {
+                      final frase = service.fraseMotivacional.value;
+                      return Positioned(
+                        top: 90,
+                        left: 30,
+                        right: 40,
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(
+                              maxWidth:
+                                  200, 
+                            ),
+                            child: Text(
+                              frase.isNotEmpty ? frase : 'Cargando frase...',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -134,7 +219,8 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CachedNetworkAsset(
-                      url: 'https://firebasestorage.googleapis.com/v0/b/psicologia-app-liid.firebasestorage.app/o/images%2Fmarciano.png?alt=media&token=3ed0d751-264c-4b62-b6cf-4e93b877bc58',
+                      url:
+                          'https://firebasestorage.googleapis.com/v0/b/psicologia-app-liid.firebasestorage.app/o/images%2Fmarciano.png?alt=media&token=3ed0d751-264c-4b62-b6cf-4e93b877bc58',
                       width: 150,
                       height: 150,
                     ),
@@ -143,17 +229,23 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                       children: [
                         Text(
                           "$_elapsedSeconds s",
-                          style: const TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: _isRunning ? _stopTimer : _startTimer,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFFBC57B8),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20)),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 40, vertical: 10),
                           ),
-                          child: Text(_isRunning ? 'Finalizar' : 'Comenzar', style: const TextStyle(color: Colors.white)),
+                          child: Text(_isRunning ? 'Finalizar' : 'Comenzar',
+                              style: const TextStyle(color: Colors.white)),
                         ),
                       ],
                     ),
@@ -176,7 +268,8 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                         controller: _textController,
                         maxLines: null,
                         expands: true,
-                        decoration: const InputDecoration.collapsed(hintText: 'Escribe aquí...'),
+                        decoration: const InputDecoration.collapsed(
+                            hintText: 'Escribe aquí...'),
                         style: const TextStyle(fontSize: 16),
                       ),
                     ),
@@ -184,7 +277,8 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                       top: -20,
                       left: 140,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
                         decoration: BoxDecoration(
                           color: Colors.grey[200],
                           border: Border.all(color: Colors.black, width: 2),
@@ -196,7 +290,10 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                         ),
                         child: const Text(
                           "Tu desafío",
-                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.black),
                         ),
                       ),
                     ),
@@ -204,17 +301,20 @@ class _EscrituraExpresivaScreenState extends State<EscrituraExpresivaScreen> wit
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: (_isStopped && _textController.text.trim().isNotEmpty)
-                  ? _saveEscrituraExpresiva
-                  : null,
+                  onPressed:
+                      (_isStopped && _textController.text.trim().isNotEmpty)
+                          ? _saveEscrituraExpresiva
+                          : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                    padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 100, vertical: 10),
                   ),
-                  child: const Text('Terminar', style: TextStyle(color: Colors.black)),
+                  child: const Text('Terminar',
+                      style: TextStyle(color: Colors.black)),
                 ),
-                
                 const SizedBox(height: 30),
               ],
             ),

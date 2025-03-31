@@ -4,6 +4,7 @@ import 'package:just_audio/just_audio.dart';
 
 class AudioService {
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioService audioService = AudioService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -25,6 +26,17 @@ class AudioService {
       print("Error al reproducir el audio: $e");
     }
   }
+
+  Future<void> playAudioFromUrl(String downloadUrl) async {
+    try {
+      await _audioPlayer.setUrl(downloadUrl);
+      _audioPlayer.play();
+      print("Reproduciendo audio desde URL directa...");
+    } catch (e) {
+      print("Error al reproducir el audio desde URL: $e");
+    }
+  }
+
 
   void stopAudio() {
     _audioPlayer.stop();

@@ -22,8 +22,8 @@ class ControllerServices extends GetxController {
   final RxInt selectedStressLevel = 0.obs; 
   final RxList<Map<String, dynamic>> gratitudeEntries = <Map<String, dynamic>>[].obs;
   final RxList<Map<String, dynamic>> expressiveEntries = <Map<String, dynamic>>[].obs;
-
-
+  final RxString fraseMotivacional = ''.obs;
+  final RxString audioUrlMotivacional = ''.obs;
 
 
   final List<String> frasesMotivacionales = [
@@ -599,6 +599,27 @@ class ControllerServices extends GetxController {
     } catch (e) {
       // print("Error al obtener logros: $e");
       return {'totalExercises': 0, 'totalAttempts': 0, 'completedAll': false, 'uniqueSessions': 0};
+    }
+  }
+
+  Future<void> fetchFraseMotivacional(String categoryId, String methodId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection("categories")
+          .doc(categoryId)
+          .collection("methods")
+          .doc(methodId)
+          .collection("exercises")
+          .doc("ejercicio1")
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data()!;
+        fraseMotivacional.value = data["description"] ?? '';
+        audioUrlMotivacional.value = data["audioUrl"] ?? '';
+      }
+    } catch (e) {
+      // print("Error al obtener frase motivacional: $e");
     }
   }
 }

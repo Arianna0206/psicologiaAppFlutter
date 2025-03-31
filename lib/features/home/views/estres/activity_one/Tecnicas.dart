@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
@@ -23,6 +24,8 @@ class TecnicasState extends State<Tecnicas> {
   final HomeController homeController = Get.find<HomeController>();
   final ControllerServices service = Get.find<ControllerServices>();
   final VideoService videoService = VideoService();
+  final RxBool isPlaying = false.obs;
+  final AudioPlayer player = AudioPlayer();
   VideoPlayerController? _videoController;
   int currentExerciseIndex = 0;
   int exerciseDuration = 20;
@@ -47,7 +50,12 @@ class TecnicasState extends State<Tecnicas> {
         });
       }
     });
+
+    player.onPlayerComplete.listen((event) {
+      isPlaying.value = false;
+    });
   }
+
 
   Future<void> loadVideo() async {
     if (service.exercises.isEmpty) return;
@@ -104,6 +112,7 @@ class TecnicasState extends State<Tecnicas> {
   @override
   void dispose() {
     _videoController?.dispose();
+    player.dispose(); 
     super.dispose();
   }
 
@@ -179,17 +188,18 @@ class TecnicasState extends State<Tecnicas> {
                   const SizedBox(height: 20),
 
                   Stack(
-                    alignment: Alignment.center,
                     children: [
                       CachedNetworkAsset(
                         url: selectedImage,
                         width: 270,
                         height: 270,
                       ),
+
+                      // Texto dentro del globo
                       Positioned(
                         top: 87,
-                        left: 33,
-                        right: 40,
+                        left: 30,
+                        right: 30,
                         child: Text(
                           exerciseDescription,
                           textAlign: TextAlign.center,
@@ -200,8 +210,51 @@ class TecnicasState extends State<Tecnicas> {
                           ),
                         ),
                       ),
+
+                      // Botón de audio
+                      Obx(() {
+                        final currentExercise = service.exercises[currentExerciseIndex].data() as Map<String, dynamic>;
+                        final audioUrl = currentExercise["audioUrl"] ?? "";
+                        if (audioUrl.isEmpty) return const SizedBox.shrink();
+
+                        return Positioned(
+                          top: 15,
+                          right: 15,
+                          child: GestureDetector(
+                            onTap: () async {
+                              try {
+                                if (isPlaying.value) {
+                                  await player.pause();
+                                  isPlaying.value = false;
+                                } else {
+                                  await player.setVolume(1.0);
+                                  await player.play(UrlSource(audioUrl));
+                                  isPlaying.value = true;
+                                }
+                              } catch (e) {
+                                Get.snackbar("Error", "No se pudo reproducir el audio.");
+                              }
+                            },
+                            child: Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 4)],
+                              ),
+                              child: Obx(() => Icon(
+                                isPlaying.value ? Icons.pause : Icons.play_arrow,
+                                color: Colors.purple,
+                                size: 24,
+                              )),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
+
 
                   const SizedBox(height: 20),
 
