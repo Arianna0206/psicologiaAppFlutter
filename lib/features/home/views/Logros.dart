@@ -79,6 +79,21 @@ class LogrosScreenState extends State<LogrosScreen> {
                   _buildAchievementsSection('⚡ Desafíos Logrados', desafios),
                   const SizedBox(height: 30),
                   _buildReminderSection(),
+                  const SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () {
+                      homeController.goToMenu(widget.categoryId);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    ),
+                    child: const Text('MENÚ', style: TextStyle(color: Colors.black)),
+                  ),
+                  const SizedBox(height: 30),
                 ],
               ),
             );
