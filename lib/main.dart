@@ -31,9 +31,10 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   await _requestNotificationPermission();
 
-  Get.put(ControllerInicio());
-  Get.put(HomeController());
-  Get.put(ControllerServices());
+  Get.lazyPut<ControllerInicio>(() => ControllerInicio(), fenix: true);
+  Get.lazyPut<HomeController>(() => HomeController(), fenix: true);
+  Get.put(ControllerServices(), permanent: true);
+
 
   runApp(MultiBlocProvider(
     providers: [BlocProvider(create: (_) => NotificationsBloc())],

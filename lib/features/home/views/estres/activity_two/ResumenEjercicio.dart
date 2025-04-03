@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -184,19 +185,24 @@ class _ResumenGratitudScreenState extends State<ResumenGratitudScreen> with Sing
                               }),
                             ),
                             Obx(() {
+                              final nivel = service.selectedStressLevel.value;
+                              print("Obx reconstruyendo con nivel: $nivel");
+
                               return AnimatedPositioned(
                                 duration: const Duration(milliseconds: 300),
-                                left: buttonWidth * service.selectedStressLevel.value + (buttonWidth / 2) - 25,
+                                left: buttonWidth * nivel + (buttonWidth / 2) - 25,
                                 top: -30,
                                 child: Container(
                                   width: 50,
                                   height: 50,
                                   alignment: Alignment.center,
-                                  child: CachedNetworkAsset(
-                                    url: _getIndicatorImage(service.selectedStressLevel.value),
+                                  child: CachedNetworkImage(
+                                    imageUrl: _getIndicatorImage(nivel),
                                     width: 50,
                                     height: 50,
                                     fit: BoxFit.contain,
+                                    placeholder: (context, url) => const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => const Icon(Icons.error),
                                   ),
                                 ),
                               );
@@ -225,8 +231,10 @@ class _ResumenGratitudScreenState extends State<ResumenGratitudScreen> with Sing
                           final aTimestamp = a['created_at'];
                           final bTimestamp = b['created_at'];
                           if (aTimestamp == null || bTimestamp == null) return 0;
-                          return (bTimestamp.toDate()).compareTo(aTimestamp.toDate());
+                          return (aTimestamp.toDate()).compareTo(bTimestamp.toDate());
                         });
+
+                        final lastFiveEntries = sortedEntries.length > 5 ? sortedEntries.sublist(sortedEntries.length - 5) : sortedEntries;
 
                         final last = sortedEntries.first;
                         final createdAt = last['created_at'];
@@ -246,7 +254,7 @@ class _ResumenGratitudScreenState extends State<ResumenGratitudScreen> with Sing
                               height: 260,
                               child: BarChart(
                                 BarChartData(
-                                  barGroups: entries.asMap().entries.map((entry) {
+                                  barGroups: lastFiveEntries.asMap().entries.map((entry) {
                                     final i = entry.key;
                                     final data = entry.value;
                                     final duration = (data["duration"] as num).toDouble();
@@ -270,7 +278,7 @@ class _ResumenGratitudScreenState extends State<ResumenGratitudScreen> with Sing
                                         reservedSize: 40,
                                         getTitlesWidget: (value, meta) => Padding(
                                           padding: const EdgeInsets.only(right: 4),
-                                          child: Text("${(value / 60).toStringAsFixed(0)}m", style: const TextStyle(color: Colors.white, fontSize: 12)),
+                                          child: Text("${(value / 60).toStringAsFixed(0)} min", style: const TextStyle(color: Colors.white, fontSize: 12)),
                                         ),
                                         interval: interval,
                                       ),
@@ -278,7 +286,7 @@ class _ResumenGratitudScreenState extends State<ResumenGratitudScreen> with Sing
                                     bottomTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
-                                        getTitlesWidget: (value, meta) => Text("Int ${value.toInt() + 1}", style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                        getTitlesWidget: (value, meta) => Text("Intento ${value.toInt() + 1}", style: const TextStyle(color: Colors.white, fontSize: 10)),
                                       ),
                                     ),
                                     rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),

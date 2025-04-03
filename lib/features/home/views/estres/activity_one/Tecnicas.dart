@@ -95,7 +95,7 @@ class TecnicasState extends State<Tecnicas> {
     var currentExercise = service.exercises[currentExerciseIndex].data() as Map<String, dynamic>;
     String exerciseId = service.exercises[currentExerciseIndex].id;
     String exerciseTitle = currentExercise["title"] ?? "Ejercicio sin título"; 
-    int duration = currentExercise["duration"] ?? 20; 
+    int duration = int.tryParse(currentExercise["duration"].toString()) ?? 20;
     await service.saveCompletedExercise(widget.categoryId, widget.methodId, exerciseId, exerciseTitle, duration);
     if (currentExerciseIndex < service.exercises.length - 1) {
       setState(() {

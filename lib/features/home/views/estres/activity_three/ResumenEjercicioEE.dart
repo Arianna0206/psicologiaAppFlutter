@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -183,19 +184,24 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                               }),
                             ),
                             Obx(() {
+                              final nivel = service.selectedStressLevel.value;
+                              print("Obx reconstruyendo con nivel: $nivel");
+
                               return AnimatedPositioned(
                                 duration: const Duration(milliseconds: 300),
-                                left: buttonWidth * service.selectedStressLevel.value + (buttonWidth / 2) - 25,
+                                left: buttonWidth * nivel + (buttonWidth / 2) - 25,
                                 top: -30,
                                 child: Container(
                                   width: 50,
                                   height: 50,
                                   alignment: Alignment.center,
-                                  child: CachedNetworkAsset(
-                                    url: _getIndicatorImage(service.selectedStressLevel.value),
+                                  child: CachedNetworkImage(
+                                    imageUrl: _getIndicatorImage(nivel),
                                     width: 50,
                                     height: 50,
                                     fit: BoxFit.contain,
+                                    placeholder: (context, url) => const CircularProgressIndicator(),
+                                    errorWidget: (context, url, error) => const Icon(Icons.error),
                                   ),
                                 ),
                               );
@@ -215,10 +221,7 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                           );
                         }
 
-                        final maxDuration = entries.map((e) => e['duration'] as num).reduce((a, b) => a > b ? a : b);
-                        final maxY = ((maxDuration + 59) / 60).ceil() * 60;
-                        final double interval = ((maxY / 5).round()).toDouble().clamp(60.0, double.infinity);
-
+            
                         final sortedEntries = [...entries];
                         sortedEntries.sort((a, b) {
                           final aTimestamp = a['created_at'];
@@ -227,10 +230,19 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                           return (bTimestamp.toDate()).compareTo(aTimestamp.toDate());
                         });
 
-                        final last = sortedEntries.first;
+                        final lastFive = sortedEntries.length > 5
+                            ? sortedEntries.sublist(sortedEntries.length - 5)
+                            : sortedEntries;
+
+                        final maxDuration = lastFive.map((e) => e['duration'] as num).reduce((a, b) => a > b ? a : b);
+                        final maxY = ((maxDuration + 59) / 60).ceil() * 60;
+                        final double interval = ((maxY / 5).round()).toDouble().clamp(60.0, double.infinity);
+
+                        final last = lastFive.last;
                         final createdAt = last['created_at'];
                         final date = createdAt != null ? createdAt.toDate() : DateTime.now();
                         final formattedDate = DateFormat("EEEE d/MM/yyyy 'a las' h:mm a", 'es_ES').format(date);
+
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +257,7 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                               height: 260,
                               child: BarChart(
                                 BarChartData(
-                                  barGroups: entries.asMap().entries.map((entry) {
+                                  barGroups: lastFive.asMap().entries.map((entry) {
                                     final i = entry.key;
                                     final data = entry.value;
                                     final duration = (data["duration"] as num).toDouble();
@@ -269,7 +281,8 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                                         reservedSize: 40,
                                         getTitlesWidget: (value, meta) => Padding(
                                           padding: const EdgeInsets.only(right: 4),
-                                          child: Text("${(value / 60).toStringAsFixed(0)}m", style: const TextStyle(color: Colors.white, fontSize: 12)),
+                                          child: Text("${(value / 60).toStringAsFixed(0)} min",
+                                              style: const TextStyle(color: Colors.white, fontSize: 12)),
                                         ),
                                         interval: interval,
                                       ),
@@ -277,7 +290,10 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                                     bottomTitles: AxisTitles(
                                       sideTitles: SideTitles(
                                         showTitles: true,
-                                        getTitlesWidget: (value, meta) => Text("Int ${value.toInt() + 1}", style: const TextStyle(color: Colors.white, fontSize: 10)),
+                                        getTitlesWidget: (value, meta) => Text(
+                                          "Intento ${value.toInt() + 1}",
+                                          style: const TextStyle(color: Colors.white, fontSize: 10),
+                                        ),
                                       ),
                                     ),
                                     rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -311,6 +327,7 @@ class _ResumenExpresivaScreenState extends State<ResumenExpresivaScreen> with Si
                           ],
                         );
                       }),
+                      
                     ],
                   ),
                 ),

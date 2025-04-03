@@ -295,8 +295,10 @@ class ControllerServices extends GetxController {
   }
 
   void updateSelectedStressLevel(int level) {
+    print("updateSelectedStressLevel() llamado con nivel: $level");
     selectedStressLevel.value = level;
   }
+
 
   // Future<void> saveAttempt(String categoryId, String methodId, int currentExerciseIndex) async {
   //   if (currentExerciseIndex < exercises.length) {

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:psicologia_app_liid/features/home/controllers/controller_services.dart';
 import 'package:psicologia_app_liid/shared/widgets/cached_image.dart';
 import '../../../controllers/home_controller.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ResumenEjercicioScreen extends StatefulWidget {
   final String categoryId;
@@ -39,6 +40,7 @@ class ResumenEjercicioScreenState extends State<ResumenEjercicioScreen> {
     super.initState();
     homeController = Get.find<HomeController>();
     service = Get.find<ControllerServices>();
+    print("Controller hash: ${service.hashCode}");
     service.actualizarMensaje();
     _fetchExercisesFuture = service.fetchExercises(widget.categoryId, widget.methodId);
     service.loadStressLevel(widget.categoryId);
@@ -247,21 +249,25 @@ class ResumenEjercicioScreenState extends State<ResumenEjercicioScreen> {
                 );
               }),
             ),
-            Obx(() { // Indicador de estrés
+            Obx(() {
+              final nivel = service.selectedStressLevel.value;
+              print("Obx reconstruyendo con nivel: $nivel");
+
               return AnimatedPositioned(
                 duration: const Duration(milliseconds: 300),
-                left: buttonWidth * service.selectedStressLevel.value + (buttonWidth / 2) - 25,
+                left: buttonWidth * nivel + (buttonWidth / 2) - 25,
                 top: -30,
                 child: Container(
                   width: 50,
                   height: 50,
                   alignment: Alignment.center,
-                  child: CachedNetworkAsset(
-                    url: _getIndicatorImage(service.selectedStressLevel.value),
+                  child: CachedNetworkImage(
+                    imageUrl: _getIndicatorImage(nivel),
                     width: 50,
                     height: 50,
                     fit: BoxFit.contain,
-                    // placeholderBuilder: (BuildContext context) => const CircularProgressIndicator(),
+                    placeholder: (context, url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
                 ),
               );
