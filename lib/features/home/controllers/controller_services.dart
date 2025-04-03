@@ -624,4 +624,127 @@ class ControllerServices extends GetxController {
       // print("Error al obtener frase motivacional: $e");
     }
   }
+
+  Future<List<String>> getAchievementsForMethod(String methodId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return [];
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .collection("completed_exercises")
+          .get();
+
+      List<String> logros = [];
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        if (data['methodId'] == methodId) {
+          final title = data['title'] ?? 'Ejercicio sin título';
+          final attempts = data['attempts'] ?? 1;
+          logros.add("$title completado $attempts veces");
+        }
+      }
+
+      return logros;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<Map<String, dynamic>> getTechniqueAchievements(String methodId) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return {"completados": [], "desafios": [], "puntos": 0};
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(user.uid)
+          .collection("completed_exercises")
+          .get();
+
+      List<String> completados = [];
+      List<String> desafios = [];
+      int puntos = 0;
+
+      int totalAttempts = 0;
+      String? title;
+
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        if (data['methodId'] == methodId) {
+          final nombre = data['title'] ?? 'Ejercicio sin título';
+          final dynamic attemptsRaw = data['attempts'] ?? 0;
+          final int attempts = (attemptsRaw is int) ? attemptsRaw : (attemptsRaw as num).toInt();
+
+          totalAttempts += attempts;
+          title = nombre;
+
+          puntos += 5;
+          completados.add("$nombre completado $attempts veces (+5 puntos)");
+        }
+      }
+
+      if (title != null) {
+        if (methodId.contains("gratitude") || methodId.contains("expressive")) {
+          desafios.add("Completaste el ejercicio de $title (+5 puntos)");
+          puntos += 5;
+        } else {
+          if (completados.length >= 5) {
+            desafios.add("Completaste 5 ejercicios de $title (+5 puntos)");
+            puntos += 5;
+          }
+        }
+
+        if (totalAttempts >= 5) {
+          desafios.add("Completaste 5 sesiones de $title (+25 puntos)");
+          puntos += 25;
+        }
+
+        if (totalAttempts >= 20) {
+          desafios.add("Completaste 20 sesiones de $title (+50 puntos)");
+          puntos += 50;
+        }
+      }
+
+      return {
+        "completados": completados,
+        "desafios": desafios,
+        "puntos": puntos,
+      };
+    } catch (e) {
+      return {"completados": [], "desafios": [], "puntos": 0};
+    }
+  }
+
+  Future<void> saveUserNotification({
+    required DateTime dateTime,
+    required String title,
+    required String body,
+    required String frequency,
+    List<int>? selectedDays,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final docRef = FirebaseFirestore.instance
+        .collection("users")
+        .doc(user.uid)
+        .collection("notifications")
+        .doc("user_notification"); 
+
+    final notificationData = {
+      "title": title,
+      "body": body,
+      "date": Timestamp.fromDate(dateTime),
+      "frequency": frequency,
+      "selectedDays": selectedDays ?? [],
+      "updated_at": FieldValue.serverTimestamp(),
+    };
+
+    await docRef.set(notificationData, SetOptions(merge: true));
+  }
+
+
 }

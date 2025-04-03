@@ -6,7 +6,14 @@ import '../controllers/home_controller.dart';
 import '../controllers/controller_services.dart';
 
 class LogrosScreen extends StatefulWidget {
-  const LogrosScreen({super.key});
+  final String categoryId;
+  final String methodId;
+
+  const LogrosScreen({
+    super.key,
+    required this.categoryId,
+    required this.methodId,
+  });
 
   @override
   LogrosScreenState createState() => LogrosScreenState();
@@ -17,7 +24,9 @@ class LogrosScreenState extends State<LogrosScreen> {
   final ControllerServices service = Get.find<ControllerServices>();
 
   TimeOfDay? selectedTime;
-  String selectedFrequency = "Diariamente"; 
+  DateTime? selectedDateTime;
+  String selectedFrequency = "Diariamente";
+  List<int> selectedDays = [];
 
   @override
   Widget build(BuildContext context) {
@@ -35,53 +44,76 @@ class LogrosScreenState extends State<LogrosScreen> {
         ),
         child: SafeArea(
           child: FutureBuilder<Map<String, dynamic>>(
-            future: service.getUserAchievements(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text('Error al cargar los logros', style: TextStyle(color: Colors.white)),
-                );
-              }
-
-              final data = snapshot.data ?? {};
-              final int uniqueSessions = data['uniqueSessions'] ?? 0;
-              final bool completedAll = data['completedAll'] ?? false;
-
-              List<String> completedAchievements = [];
-              if (completedAll) {
-                completedAchievements.add("Completaste todos los ejercicios y ganaste 5 puntos");
-              }
-
-              List<String> challenges = [];
-              challenges.add("Has realizado $uniqueSessions sesiones en total");
-              int challengePoints = 0;
-              if (uniqueSessions >= 5) challengePoints += 25;
-              if (uniqueSessions >= 20) challengePoints += 50;
-              challenges.add("Acumulaste $challengePoints puntos en desafíos");
-
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    const Text(
-                      'LOGROS',
-                      style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildAchievementsSection('✅ Conseguido', completedAchievements),
-                    const SizedBox(height: 20),
-                    _buildAchievementsSection('⚡ Desafíos', challenges),
-                    const SizedBox(height: 20),
-                    _buildReminderSection(),
-                  ],
-                ),
+          future: service.getTechniqueAchievements(widget.methodId),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('Error al cargar los logros', style: TextStyle(color: Colors.white)),
               );
-            },
-          ),
+            }
+
+            final data = snapshot.data ?? {};
+            final completados = List<String>.from(data["completados"] ?? []);
+            final desafios = List<String>.from(data["desafios"] ?? []);
+            final int puntosTotales = data["puntos"] ?? 0;
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
+                  const Text(
+                    'LOGROS',
+                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "🎖️ Total de puntos ganados: $puntosTotales",
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.amber),
+                  ),
+                  const SizedBox(height: 20),
+                  _buildAchievementsSection('✅ Ejercicios Completados', completados),
+                  const SizedBox(height: 20),
+                  _buildAchievementsSection('⚡ Desafíos Logrados', desafios),
+                  const SizedBox(height: 30),
+                  _buildReminderSection(),
+                ],
+              ),
+            );
+          },
+        )
         ),
+      ),
+    );
+  }
+
+  Widget _buildAchievementsSection(String title, List<String> achievements) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              children: achievements.isNotEmpty
+                  ? achievements.map((e) => Text('- $e', style: const TextStyle(fontSize: 16, color: Colors.black))).toList()
+                  : [const Text('No hay logros aún.', style: TextStyle(fontSize: 16, color: Colors.black))],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -94,7 +126,6 @@ class LogrosScreenState extends State<LogrosScreen> {
           style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         const SizedBox(height: 10),
-
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -103,9 +134,7 @@ class LogrosScreenState extends State<LogrosScreen> {
             _buildFrequencyButton("Personalizado"),
           ],
         ),
-
         const SizedBox(height: 15),
-
         Container(
           width: 300,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -118,10 +147,7 @@ class LogrosScreenState extends State<LogrosScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "Fecha y Hora",
-                    style: TextStyle(fontSize: 18, color: Colors.black),
-                  ),
+                  const Text("Fecha y Hora", style: TextStyle(fontSize: 18, color: Colors.black)),
                   GestureDetector(
                     onTap: _pickDateTime,
                     child: Container(
@@ -142,15 +168,12 @@ class LogrosScreenState extends State<LogrosScreen> {
                 ],
               ),
               const SizedBox(height: 15),
-
               if (selectedFrequency == "Personalizado") _buildDaySelection(),
               const SizedBox(height: 15),
             ],
           ),
         ),
-
         const SizedBox(height: 15),
-
         ElevatedButton(
           onPressed: _scheduleNotification,
           child: const Text("Guardar Recordatorio"),
@@ -159,85 +182,73 @@ class LogrosScreenState extends State<LogrosScreen> {
     );
   }
 
-    Widget _buildDaySelection() {
-      return Column(
-        children: [
-          const Text("Selecciona los días:", style: TextStyle(fontSize: 18, color: Colors.black)),
-          Wrap(
-            spacing: 5,
-            children: List.generate(7, (index) {
-              final daysOfWeek = ["L", "M", "X", "J", "V", "S", "D"];
-              final dayIndex = index + 1; // Lunes = 1, Domingo = 7
-              final isSelected = selectedDays.contains(dayIndex);
-
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      selectedDays.remove(dayIndex);
-                    } else {
-                      selectedDays.add(dayIndex);
-                    }
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue : Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    daysOfWeek[index],
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: isSelected ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ),
-              );
-            }),
-          ),
-        ],
-      );
-    }
-
-    List<int> selectedDays = [];
-
-  void _scheduleNotification() {
-    if (selectedDateTime != null) {
-      final state = context.read<NotificationsBloc>().state;
-
-      String notificationTitle = "Título predeterminado";
-      String notificationBody = "Mensaje predeterminado";
-
-      if (state is NotificationsLoaded && state.notifications.isNotEmpty) {
-        notificationTitle = state.notifications.first.title;
-        notificationBody = state.notifications.first.body;
-      }
-
-      print("[LogrosScreen] Programando recordatorio con: $notificationTitle - $notificationBody");
-
-      context.read<NotificationsBloc>().add(
-        ScheduleNotification(
-          date: selectedDateTime!,
-          time: TimeOfDay(hour: selectedDateTime!.hour, minute: selectedDateTime!.minute),
-          title: notificationTitle,
-          body: notificationBody,
-          frequency: selectedFrequency,
-          selectedDays: selectedDays.isEmpty ? null : selectedDays,
+  Widget _buildFrequencyButton(String text) {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          selectedFrequency = text;
+          if (text != "Personalizado") {
+            selectedDays.clear();
+          }
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: selectedFrequency == text ? Colors.blue : Colors.white),
+          borderRadius: BorderRadius.circular(10),
+          color: selectedFrequency == text ? Colors.blue[300] : Colors.transparent,
         ),
-      );
-
-      Get.snackbar(
-        "✅ Recordatorio Guardado",
-        "Notificación programada: $notificationTitle - $notificationBody",
-      );
-    } else {
-      Get.snackbar("⚠️ Error", "Selecciona una fecha y hora primero.");
-    }
+        child: Text(
+          text,
+          style: TextStyle(color: selectedFrequency == text ? Colors.white : Colors.white70, fontSize: 16),
+        ),
+      ),
+    );
   }
 
-  DateTime? selectedDateTime; 
+  Widget _buildDaySelection() {
+    return Column(
+      children: [
+        const Text("Selecciona los días:", style: TextStyle(fontSize: 18, color: Colors.black)),
+        Wrap(
+          spacing: 5,
+          children: List.generate(7, (index) {
+            final daysOfWeek = ["L", "M", "X", "J", "V", "S", "D"];
+            final dayIndex = index + 1;
+            final isSelected = selectedDays.contains(dayIndex);
+
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedDays.remove(dayIndex);
+                  } else {
+                    selectedDays.add(dayIndex);
+                  }
+                });
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.blue : Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  daysOfWeek[index],
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isSelected ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
 
   Future<void> _pickDateTime() async {
     DateTime now = DateTime.now();
@@ -269,59 +280,41 @@ class LogrosScreenState extends State<LogrosScreen> {
     }
   }
 
-  Widget _buildFrequencyButton(String text) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          selectedFrequency = text;
-          if (text != "Personalizado") {
-            selectedDays.clear(); 
-          }
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: selectedFrequency == text ? Colors.blue : Colors.white),
-          borderRadius: BorderRadius.circular(10),
-          color: selectedFrequency == text ? Colors.blue[300] : Colors.transparent,
+  void _scheduleNotification() async {
+    if (selectedDateTime != null) {
+      final state = context.read<NotificationsBloc>().state;
+
+      String notificationTitle = "Título predeterminado";
+      String notificationBody = "Mensaje predeterminado";
+
+      if (state is NotificationsLoaded && state.notifications.isNotEmpty) {
+        notificationTitle = state.notifications.first.title;
+        notificationBody = state.notifications.first.body;
+      }
+
+      await service.saveUserNotification(
+        dateTime: selectedDateTime!,
+        title: notificationTitle,
+        body: notificationBody,
+        frequency: selectedFrequency,
+        selectedDays: selectedDays,
+      );
+
+      context.read<NotificationsBloc>().add(
+        ScheduleNotification(
+          date: selectedDateTime!,
+          time: TimeOfDay(hour: selectedDateTime!.hour, minute: selectedDateTime!.minute),
+          title: notificationTitle,
+          body: notificationBody,
+          frequency: selectedFrequency,
+          selectedDays: selectedDays.isEmpty ? null : selectedDays,
         ),
-        child: Text(
-          text,
-          style: TextStyle(color: selectedFrequency == text ? Colors.white : Colors.white70, fontSize: 16),
-        ),
-      ),
-    );
+      );
+
+      Get.snackbar("Recordatorio Guardado", "Notificación programada: $notificationTitle - $notificationBody");
+    } else {
+      Get.snackbar("Error", "Selecciona una fecha y hora primero.");
+    }
   }
 
-
-  Widget _buildAchievementsSection(String title, List<String> achievements) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              children: achievements.isNotEmpty
-                  ? achievements.map((e) => Text('- $e', style: const TextStyle(fontSize: 16, color: Colors.black))).toList()
-                  : [const Text('⚠️ No hay logros aún.', style: TextStyle(fontSize: 16, color: Colors.black))],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }

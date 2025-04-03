@@ -153,7 +153,7 @@ class ResumenEjercicioScreenState extends State<ResumenEjercicioScreen> {
                               const SizedBox(width: 15),
                               ElevatedButton(
                                 onPressed: () async {
-                                  homeController.goToLogros();
+                                  homeController.goToLogros(widget.categoryId, widget.methodId);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,

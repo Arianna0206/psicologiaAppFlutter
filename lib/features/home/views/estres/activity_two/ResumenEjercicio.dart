@@ -128,7 +128,7 @@ class _ResumenGratitudScreenState extends State<ResumenGratitudScreen> with Sing
                 ScaleTransition(
                   scale: _scaleAnimation,
                   child: ElevatedButton(
-                    onPressed: () => homeController.goToLogros(),
+                    onPressed: () => homeController.goToLogros(widget.categoryId, widget.methodId),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,

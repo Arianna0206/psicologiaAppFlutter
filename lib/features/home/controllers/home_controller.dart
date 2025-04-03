@@ -69,13 +69,14 @@ class HomeController extends GetxController {
     Get.off(()=> ResumenEjercicioScreen(categoryId: categoryId.toLowerCase(), methodId: methodId.toLowerCase()), transition: Transition.downToUp, duration: const Duration(milliseconds: 1000));
   }
 
-  void goToLogros() {
+  void goToLogros(String categoryId, String methodId) {
     Get.off(
-      () => LogrosScreen(), 
+      () => LogrosScreen(categoryId: categoryId, methodId: methodId),
       transition: Transition.downToUp,
       duration: const Duration(milliseconds: 1000),
     );
   }
+
 
   void goToResumenGratitud(String categoryId, String methodId) {
     Get.off(
