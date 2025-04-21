@@ -1,7 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'dart:async';
 import 'package:get/get.dart';
-import '../../../../features/home/views/pantalla_carga.dart';
+// import '../../../../features/home/views/pantalla_carga.dart';
 
 class ControllerInicio extends GetxController {
   bool delay = true;
@@ -29,8 +29,8 @@ class ControllerInicio extends GetxController {
       showMessage.value = false;
     });
   }
-  void goToPantallaCarga() {
-    Get.off(() => const PantallaCarga(),transition: Transition.fade,duration: const Duration(milliseconds: 2000)
-    );
-  }
+  // void goToPantallaCarga() {
+  //   Get.off(() => const PantallaCarga(),transition: Transition.fade,duration: const Duration(milliseconds: 2000)
+  //   );
+  // }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:psicologia_app_liid/features/auth/terms_and_conditions_screen.dart';
 
@@ -11,6 +12,9 @@ class Intermediario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FlutterNativeSplash.remove();
+
+
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: InicioSesion(),
